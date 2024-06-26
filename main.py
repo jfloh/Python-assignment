@@ -1,2 +1,1 @@
-while true:
-    print("SIM IS Cringe")
+print("SIMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM")
