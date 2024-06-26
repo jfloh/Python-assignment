@@ -6,7 +6,7 @@ def main_m():
         #Call sign-up function here
     elif function == 2:
         #Call login function here
-    elif function == 3:
+    else:
         print("Exit selected")
         quit()
 main_m()
