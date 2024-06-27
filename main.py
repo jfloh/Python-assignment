@@ -1,3 +1,4 @@
+sp_user=['admin123','admin123']
 def main_menu():
     while True:
         print("Welcome to KLCCC System")
