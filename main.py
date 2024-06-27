@@ -17,7 +17,7 @@ def main_menu():
         else:
             print("Invalid choice. Please try again!\n")
 def login_sys():
-#Login sytem here
+#Login system here
 def signup_sys():
 #Sign up system here
 main_menu()
