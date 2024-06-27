@@ -16,4 +16,8 @@ def main_menu():
             quit()
         else:
             print("Invalid choice. Please try again!\n")
+def login_sys():
+#Login sytem here
+def signup_sys():
+#Sign up system here
 main_menu()
