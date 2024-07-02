@@ -1,2 +1,1 @@
-Weijie, 051130
-Jf,051109
+CTC,0000,superuser,True
