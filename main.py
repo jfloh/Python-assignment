@@ -8,7 +8,9 @@ def main_menu():
         choice = input("Enter your choice: ")
 
         if choice == '1':
-            user_management.sign_up()
+            #user_management.sign_up()
+            signup_sys()
+            break
         elif choice == '2':
             login_sys()
             break
@@ -35,6 +37,13 @@ def login_sys():
         print("Login Successful")
     else:
         print("Username or Password incorrect, please try again")
-#def signup_sys():
+def signup_sys():
+    sign_name = input("Enter username: ")
+    sign_pass = input("Enter password: ")
+    file= open("User_details.txt","a")
+    file.write("\n"+sign_name)
+    file.write(",")
+    file.write(sign_pass)
+    file.close()
 #Sign up system here
 main_menu()
