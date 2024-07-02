@@ -1,4 +1,4 @@
-sp_user="admin,admin123" #Define Super-user usernama & password
+sp_user="admin,admin123" #Define Super-user username & password
 def main_menu():
     while True:
         print("Welcome to KLCCC System")
