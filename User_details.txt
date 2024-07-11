@@ -1,1 +1,2 @@
 CTC,0000,superuser,True
+ nigga,nigga1,your mom,False
