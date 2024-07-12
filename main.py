@@ -9,10 +9,31 @@ def main_menu():
         choice = input("Enter your choice: ")
 
         if choice == '1':
-            username = input("Enter username: ")
-            password = input("Enter password: ")
-            role = input("Enter role (customer/admin/superuser): ").lower()
-            sign_up(username, password, role)
+            #Loop until a valid username is provided
+            while True:
+                username = input("Enter username: ")
+                if username:
+                    name = username
+                    break
+                else:
+                    print("Provide a valid username")
+
+            # Loop until passwords match
+            while True:
+                password = input("Enter password: ")
+                if not password:
+                    print("Provide a valid password")
+                    continue
+                elif len(password) < 8:
+                    print("Password too short, must be at least 8 characters")
+                    continue
+                password1 = input("Re-enter your password: ")
+                if password != password1:
+                    print("Passwords don't match, please try again")
+                else:
+                    break
+            #role = input("Enter role (customer/admin): ").lower()
+            #sign_up(username, password, role)
             break
         elif choice == '2':
             username = input("Enter username: ")
@@ -29,6 +50,11 @@ def main_menu():
             break
         else:
             print("Invalid choice. Please try again!\n")
+def time():
+    from datetime import datetime
+    now = datetime.now()
+    date_string = now.strftime('%Y-%m-%d %H:%M:%S')
+    return date_string
 def login_sys(username, password):
     users = read_users()
     for user in users:
@@ -61,10 +87,15 @@ def read_users():
         for line in file:
             users.append(line.strip().split(','))
     return users
-
-
+def read_pending():
+    users = []
+    with open(Pending_approve, 'r') as file:
+        for line in file:
+            users.append(line.strip().split(','))
+    return users
 # Function to write users to file
 def write_users(users):
+    users.append(time())
     with open(User_details, 'w') as file:
         for user in users:
             file.write(','.join(user) + '\n')
@@ -78,15 +109,15 @@ def sign_up(username, password, role):
             print("Username already exists.")
             return
 
-    approved = 'False'
-    if role == 'customer':
-        approved = 'False'
-    elif role == 'admin':
-        approved = 'False'
-    elif role == 'superuser':
-        approved = 'True'  # Superuser will be approved
+    #approved = 'False'
+    #if role == 'customer':
+        #approved = 'False'
+    #elif role == 'admin':
+        #approved = 'False'
+    #elif role == 'superuser':
+        #approved = 'True'  # Superuser will be approved
 
-    users.append([username, password, role, approved])
+    users.append([username, password])
     write_users(users)
     print(f"User {username} signed up successfully. Awaiting approval.")
 
