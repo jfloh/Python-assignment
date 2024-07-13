@@ -32,8 +32,8 @@ def main_menu():
                     print("Passwords don't match, please try again")
                 else:
                     break
-            #role = input("Enter role (customer/admin): ").lower()
-            #sign_up(username, password, role)
+            role = input("Enter role (customer/admin/staff): ").lower()
+            sign_up(username, password, role)
             break
         elif choice == '2':
             username = input("Enter username: ")
@@ -121,5 +121,28 @@ def sign_up(username, password, role):
     write_users(users)
     print(f"User {username} signed up successfully. Awaiting approval.")
 
+
 if __name__ == "__main__":
     main_menu()
+#Inventory Management
+#def inventory_login():
+#    while True:
+#        print("1:Purchase \n2:Stock check \n3:Check purchase order status \n4:Purchase Cart \n5:Report \n6:EXIT ")
+#        inventory_func = int(input("Enter the choice"))
+#        if inventory_func == 1:
+#           Call part list func
+#        elif inventory_func == 2:
+#           Call func
+#        elif inventory_func == 3 :
+#           Call func
+#        elif inventory_func == 4 :
+#           Call func
+#        elif inventory_func == 5 :
+#           Call func
+#         else:
+#           print("Invalid")
+#           break
+
+
+#if __name__ == "__main__":
+#    main_menu()
