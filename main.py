@@ -92,3 +92,4 @@ def sign_up(username, password, role):
 
 if __name__ == "__main__":
     main_menu()
+
