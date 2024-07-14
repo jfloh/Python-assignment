@@ -139,9 +139,11 @@ if __name__ == "__main__":
 #           Call func
 #        elif inventory_func == 5 :
 #           Call func
-#         else:
-#           print("Invalid")
+#        elif inventory_func == 6:
+#           print("Exiting...")
 #           break
+#        else:
+#           print("Invalid")
 
 
 #if __name__ == "__main__":
