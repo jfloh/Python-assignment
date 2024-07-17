@@ -12,8 +12,7 @@ def main_menu():
             #Loop until a valid username is provided
             while True:
                 username = input("Enter username: ")
-                if username:
-                    name = username
+                if len(username.strip("")) > 0:
                     break
                 else:
                     print("Provide a valid username")
