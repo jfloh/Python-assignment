@@ -11,46 +11,52 @@ def main_menu():
         choice = input("Enter your choice: ")
 
         if choice == '1':
-            #Loop until a valid username is provided
-            while True:
-                username = input("Enter username: ")
-                if len(username.strip("")) > 0:
-                    break
-                else:
-                    print("Provide a valid username")
-
-            # Loop until passwords match
-            while True:
-                password = input("Enter password: ")
-                if not password:
-                    print("Provide a valid password")
-                    continue
-                elif len(password) < 8:
-                    print("Password too short, must be at least 8 characters")
-                    continue
-                password1 = input("Re-enter your password: ")
-                if password != password1:
-                    print("Passwords don't match, please try again")
-                else:
-                    break
-            role = input("Enter role (customer/admin/staff): ").lower()
-            sign_up(username, password, role)
-            break
+            sign_up_process()
         elif choice == '2':
-            username = input("Enter username: ")
-            password = input("Enter password: ")
-            login_sys(username, password)
-            break
+            login_process()
         elif choice == '3':
-            super_user = input("Enter your role: ").lower()
-            username = input("Enter username to approve: ")
-            approve_user(super_user, username)
+            approve_user_process()
             break
         elif choice == '4':
             print("Exiting the system.")
             break
         else:
             print("Invalid choice. Please try again!\n")
+def sign_up_process():
+    # Loop until a valid username is provided
+    while True:
+        username = input("Enter username: ")
+        if len(username.strip()) > 0:
+            break
+        else:
+            print("Provide a valid username")
+
+    # Loop until passwords match
+    while True:
+        password = input("Enter password: ")
+        if not password:
+            print("Provide a valid password")
+            continue
+        elif len(password) < 8:
+            print("Password too short, must be at least 8 characters")
+            continue
+        password1 = input("Re-enter your password: ")
+        if password != password1:
+            print("Passwords don't match, please try again")
+        else:
+            break
+    role = input("Enter role (customer/admin/superuser): ").lower()
+    sign_up(username, password, role)
+
+def login_process():
+    username = input("Enter username: ")
+    password = input("Enter password: ")
+    login_sys(username, password)
+
+def approve_user_process():
+    super_user = input("Enter your role: ").lower()
+    username = input("Enter username to approve: ")
+    approve_user(super_user, username)
 def time():
     from datetime import datetime
     now = datetime.now()
@@ -99,6 +105,7 @@ def login_sys(username, password):
         if user[0] == username and user[1] == password:
             if user[3] == 'True':
                 print(f"Login successful. Welcome {user[0]} ({user[2]})")
+                user_menu(user)  # Call user_menu with user details
             else:
                 print(f"User {username} is not approved yet.")
             return
@@ -121,9 +128,16 @@ def approve_user(super_user, username):
 # Function to read users from file
 def read_users():
     users = []
-    with open(User_details, 'r') as file:
-        for line in file:
-            users.append(line.strip().split(','))
+    try:
+        with open(User_details, 'r') as file:
+            for line in file:
+                user = line.strip().split(',')
+                if len(user) == 4:  # Ensure there are exactly 4 fields
+                    users.append(user)
+                else:
+                    print(f"Skipping invalid user entry: {line.strip()}")
+    except FileNotFoundError:
+        print("User details file not found.")
     return users
 def read_pending():
     users = []
@@ -133,7 +147,6 @@ def read_pending():
     return users
 # Function to write users to file
 def write_users(users):
-    users.append(time())
     with open(User_details, 'w') as file:
         for user in users:
             file.write(','.join(user) + '\n')
@@ -147,15 +160,11 @@ def sign_up(username, password, role):
             print("Username already exists.")
             return
 
-    #approved = 'False'
-    #if role == 'customer':
-        #approved = 'False'
-    #elif role == 'admin':
-        #approved = 'False'
-    #elif role == 'superuser':
-        #approved = 'True'  # Superuser will be approved
+    approved = 'False'
+    if role == 'superuser':
+        approved = 'True'  # Superuser will be approved immediately
 
-    users.append([username, password])
+    users.append([username, password, role, approved])
     write_users(users)
     print(f"User {username} signed up successfully. Awaiting approval.")
 
