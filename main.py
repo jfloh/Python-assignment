@@ -45,6 +45,13 @@ def sign_up_process():
             print("Passwords don't match, please try again")
         else:
             break
+    while True :
+        phone_num = input("Enter Phone number")
+        if phone_num in range(10,12):
+            break
+        else:
+            print("Provide a valid phone number")
+
     role = input("Enter role (customer/admin/superuser): ").lower()
     sign_up(username, password, role)
 
