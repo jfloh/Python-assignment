@@ -1,3 +1,4 @@
 ChaiTC,00000000,superuser,True
 nigga,nigga1,your mom,False
 Caleb,07505100,superuser,True
+JF,88888888,inventory,True

@@ -112,9 +112,14 @@ def login_sys(username, password):
         if user[0] == username and user[1] == password:
             if user[3] == 'True':
                 print(f"Login successful. Welcome {user[0]} ({user[2]})")
-                user_menu(user)  # Call user_menu with user details
+                if user[2] == 'superuser' :
+                    user_menu(user)  # Call user_menu with user details
+                elif user[2] == 'inventory' :
+                    inventory_menu()
+
             else:
                 print(f"User {username} is not approved yet.")
+
             return
     print("Invalid username or password.")
 
@@ -265,29 +270,102 @@ def inquiry_sys_usage():
     except FileNotFoundError:
         print("No system usage details found.")
 
+#Inventory Management #LOH JIAN FENG #TP076480
+def inventory_menu():
+    while True:
+        print("\nInventory Menu")
+        print("1:Purchase \n2:Stock check \n3:Check purchase order status \n4:Purchase Cart \n5:Report \n6:EXIT ")
+        inventory_func = int(input("Enter the choice"))
+        if inventory_func == 1:
+            display_inventory(read_inventory())
+            purchase_inventory()
+        elif inventory_func == 2:
+           display_inventory(read_inventory())
+        elif inventory_func == 3 :
+            continue
+        elif inventory_func == 4 :
+            continue
+        elif inventory_func == 5 :
+            continue
+        elif inventory_func == 6:
+           print("Exiting...")
+           break
+        else:
+           print("Invalid")
+#Reading inventory in list of list
+def read_inventory():
+    # Check the inventory file
+    try:
+        with open("inventory.txt", "r") as file:
+            lines = file.readlines()
+    except FileNotFoundError:
+        print("Inventory file not found.")
+        return
+
+    inventory_data = []
+    for i, line in enumerate(lines, 1):
+        line = line.strip()
+        if not line:
+            continue
+
+        try:
+            columns = line.split(",")
+            #Validating the data
+            if len(columns) != 3:
+                print(f"Warning: Invalid data in line {i}. Skipping.")
+                continue
+            #Putting item in a list of list
+            name, quantity, price = columns
+            inventory_data.append((name, int(quantity), float(price)))
+        except ValueError:
+            print(f"Warning: Invalid data in line {i}. Skipping.")
+    return inventory_data
+
+#Display the inventory stock
+def display_inventory(inventory_data):
+    if len(inventory_data) != 0 :
+        print("Current Inventory:")
+        for i, item in enumerate(inventory_data ,1): #Loop until printing all of the item
+            print(f"{i}.{item[0]}:Quantity:{item[1]},Price:RM{item[2]:.2f}")
+    else:
+        print("Inventory is empty.")
+def purchase_inventory():
+    inventory_list= read_inventory()
+    display_inventory(inventory_list)
+    purchase_list = []
+    while True:
+        purchase_item = input("""Enter item number to purchase, "new" for a new item, or "exit" to finish: """ )
+        if purchase_item.lower() == "exit" :
+            print("Exiting...")
+            break
+        if purchase_item.lower() == "new" :
+            name = input("Enter item name: ")
+            quantity = int(input("Enter quantity: "))
+            price = float(input("Enter price: "))
+            purchase_list.append((name, quantity, price))
+            print(f"{name} added to inventory.")
+        elif purchase_item.isnumeric():
+            index_item = int(purchase_item) - 1
+            if 0 <= index_item < len(inventory_list) :
+                item = inventory_list[index_item]
+                quantity = int(input(f"Enter quantity to purchase for {item[0]} "))
+                if quantity > 0 :
+                    purchase_list.append((item[0],quantity,item[2]))
+                    print(f"{item[0]}added to purchase list.")
+
+                else :
+                    print("Invalid quantity.")
+            else :
+                print("Invalid item number")
+        else :
+            print("Invalid input")
+    if len(purchase_list) != 0 :
+        print("Purchase Summary: ")
+        total_purchase = 0
+        for item in purchase_list:
+            total = item[1] * item[2]
+            purchase_list.append(total)
+            print(f"{item[0]}: Quantity:{item[1]},Cost per unit:RM{item[2]:.2f}, Total:RM{item[3]:.2f} ")
+        return purchase_list
 if __name__ == "__main__":
     main_menu()
-#Inventory Management
-#def inventory_login():
-#    while True:
-#        print("1:Purchase \n2:Stock check \n3:Check purchase order status \n4:Purchase Cart \n5:Report \n6:EXIT ")
-#        inventory_func = int(input("Enter the choice"))
-#        if inventory_func == 1:
-#           Call part list func
-#        elif inventory_func == 2:
-#           Call func
-#        elif inventory_func == 3 :
-#           Call func
-#        elif inventory_func == 4 :
-#           Call func
-#        elif inventory_func == 5 :
-#           Call func
-#        elif inventory_func == 6:
-#           print("Exiting...")
-#           break
-#        else:
-#           print("Invalid")
-
-
-#if __name__ == "__main__":
-#    main_menu()
