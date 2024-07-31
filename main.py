@@ -6,8 +6,7 @@ def main_menu():
         print("Welcome to KLCCC System")
         print("1. Sign Up")
         print("2. Login")
-        print("3. Approve User")
-        print("4. Exit")
+        print("3. Exit")
         choice = input("Enter your choice: ")
 
         if choice == '1':
@@ -15,9 +14,6 @@ def main_menu():
         elif choice == '2':
             login_process()
         elif choice == '3':
-            approve_user_process()
-            break
-        elif choice == '4':
             print("Exiting the system.")
             break
         else:
@@ -82,7 +78,8 @@ def user_menu(user):
             print("5. Modify User Personal Details")
             print("6. Disable User Access")
             print("7. Inquiry of User’s system usage")
-        print("8. Exit")
+            print("8. Approve User")
+        print("9. Exit")
 
         choice = input("Enter your choice: ")
 
@@ -103,6 +100,8 @@ def user_menu(user):
             disable_user_access()
         elif choice == '7' and user[2] == 'superuser':
             inquiry_sys_usage()
+        elif choice == '8' and user[2] == 'superuser':
+            approve_user_process()
         else:
             print("Invalid choice. Please try again!")
 
@@ -123,10 +122,10 @@ def login_sys(username, password):
             return
     print("Invalid username or password.")
 
-# approval process
+# Approval process
 def approve_user(super_user, username):
     users = read_users()
-    if super_user not in ['superuser','admin']:
+    if super_user not in ['superuser', 'admin']:
         print("Only superuser and admin can approve.")
         return
 
@@ -137,6 +136,7 @@ def approve_user(super_user, username):
             print(f"User {username} approved successfully.")
             return
     print(f"User {username} not found.")
+
 # Function to read users from file
 def read_users():
     users = []
