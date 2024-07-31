@@ -136,15 +136,15 @@ def login_sys(username, password):
                 if user[5] == 'superuser' :
                     user_menu(user)  # Call user_menu with user details
                 elif user[5] == 'inventory' :
-                    inventory_menu()
+                    inventory_menu(user[0],user[5])
 
             else:
-                print(f"User {username} is not approved yet.")
+                print(f"User {username} is not approved yet. Please contact admin to approve...")
 
             return
     print("Invalid username or password.")
 
-# Approval process
+# approval process
 def approve_user(super_user, username):
     users = read_users()
     if super_user not in ['superuser', 'admin']:
@@ -158,7 +158,6 @@ def approve_user(super_user, username):
             print(f"User {username} approved successfully.")
             return
     print(f"User {username} not found.")
-
 # Function to read users from file
 def read_users():
     users = []
@@ -287,16 +286,16 @@ def inquiry_sys_usage():
         print("No system usage details found.")
 
 #Inventory Management #LOH JIAN FENG #TP076480
-def inventory_menu():
+def inventory_menu(name, role):
     while True:
         print("\nInventory Menu")
         print("1:Purchase \n2:Stock check \n3:Check purchase order status \n4:Purchase Cart \n5:Report \n6:EXIT ")
         inventory_func = int(input("Enter the choice"))
         if inventory_func == 1:
-            display_inventory(read_inventory())
-            purchase_inventory()
+            purchase_inventory(name, role)
         elif inventory_func == 2:
            display_inventory(read_inventory())
+           update_inventory()
         elif inventory_func == 3 :
             continue
         elif inventory_func == 4 :
@@ -345,29 +344,42 @@ def display_inventory(inventory_data):
             print(f"{i}.{item[0]}:Quantity:{item[1]},Price:RM{item[2]:.2f}")
     else:
         print("Inventory is empty.")
-def purchase_inventory():
+def purchase_inventory(name, role):
     inventory_list= read_inventory()
     display_inventory(inventory_list)
     purchase_list = []
     while True:
-        purchase_item = input("""Enter item number to purchase, "new" for a new item, or "exit" to finish: """ )
-        if purchase_item.lower() == "exit" :
-            print("Exiting...")
-            break
+        purchase_item = input("""Enter item number to purchase, "new" for a new item, or "exit" to exit: """ )
+        if purchase_item.lower() == "exit":
+            return None
         if purchase_item.lower() == "new" :
             name = input("Enter item name: ")
             quantity = int(input("Enter quantity: "))
             price = float(input("Enter price: "))
-            purchase_list.append((name, quantity, price))
-            print(f"{name} added to inventory.")
+            purchase_list.append((name, quantity, price,name, role,time()))
+            print(f"{name} added to purchase order.")
+            addmore_option = input("Do you want to add more ? (Y/N)")
+            if addmore_option.lower() == 'y':
+                continue
+            elif addmore_option.lower() == 'n':
+                break
+            else:
+                print("Invalid")
         elif purchase_item.isnumeric():
             index_item = int(purchase_item) - 1
             if 0 <= index_item < len(inventory_list) :
                 item = inventory_list[index_item]
                 quantity = int(input(f"Enter quantity to purchase for {item[0]} "))
                 if quantity > 0 :
-                    purchase_list.append((item[0],quantity,item[2]))
+                    purchase_list.append((item[0],quantity,item[2],name, role,time()))
                     print(f"{item[0]}added to purchase list.")
+                    addmore_option = input("Do you want to add more ? (Y/N)")
+                    if addmore_option.lower()=='y' :
+                        continue
+                    elif addmore_option.lower()== 'n':
+                        break
+                    else :
+                        print("Invalid")
 
                 else :
                     print("Invalid quantity.")
@@ -376,13 +388,35 @@ def purchase_inventory():
         else :
             print("Invalid input")
     if len(purchase_list) != 0 :
-        print("Purchase Summary: ")
-        total_purchase = 0
-        for item in purchase_list:
-            total = item[1] * item[2]
-            purchase_list.append(total)
-            print(f"{item[0]}: Quantity:{item[1]},Cost per unit:RM{item[2]:.2f}, Total:RM{item[3]:.2f} ")
+        purchase_summary(purchase_list)
         return purchase_list
+def purchase_summary(purchase_list):
+    total_purchase = 0
+    for item in purchase_list:
+        total = item[1] * item[2]
+        purchase_list.append(total)
+        print(f"{item[0]}: Quantity:{item[1]},Cost per unit:RM{item[2]:.2f}, Total:RM{item[3]:.2f} ")
+    return purchase_list
+
+def update_inventory(): #Function for update inventory
+    inventory_list = read_inventory()
+    while True:
+        initial_input_1 = input("Do you want to update inventory ?(Y/N) ")
+        if initial_input_1.lower() == 'y':
+            break
+        elif initial_input_1.lower() == 'n':
+            return None
+        else:
+            print("Invalid")
+    name = input("Enter item name: ")
+    for i, item in enumerate(inventory_list):
+        if item[0] == name:
+            new_quantity = int(input("Enter new quantity: "))
+            inventory_list[i] = (item[0], new_quantity, item[2])
+            print(f"{name} quantity updated to {new_quantity}.")
+            #save_inventory(inventory_list)
+            return
+    print("Item not found in inventory.")
 if __name__ == "__main__":
     main_menu()
 
