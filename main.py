@@ -41,15 +41,37 @@ def sign_up_process():
             print("Passwords don't match, please try again")
         else:
             break
-    while True :
-        phone_num = input("Enter Phone number")
-        if phone_num in range(10,12):
+    while True:
+        phone_num = input("Enter phone number: ").strip()
+        if phone_num.isdigit() and 10 <= len(phone_num) <= 12:
             break
         else:
-            print("Provide a valid phone number")
+            print("Provide a valid phone number (10-12 digits).")
+    while True:
+        ic_passport = input("Enter IC/Passport number: ").strip()
+        if ic_passport.isdigit() and 12 <= len(ic_passport) <= 15:
+            break
+        else:
+            print("Provide a valid IC/Passport number (12-15 digits).")
+    while True:
+        city = input("Enter city of domicile: ").strip()
+        if len(city) > 0:
+            break
+        else:
+            print("Provide a valid city of domicile.")
+    while True:
+        role = input("Enter role (customer/admin/superuser): ").lower().strip()
+        valid_roles = ['customer', 'admin', 'superuser']
+        if role.isdigit():
+            print("Role cannot be a number. Please enter a valid role.")
+        elif role in valid_roles:
+            print(f"Role '{role}' is valid.")
+            break
+        else:
+            print("Invalid role. Please enter 'customer', 'admin', or 'superuser'.")
 
-    role = input("Enter role (customer/admin/superuser): ").lower()
-    sign_up(username, password, role)
+    sign_up(username, password, phone_num, ic_passport, city, role)
+    print("Signed up successfully. Awaiting approval process...")
 
 def login_process():
     username = input("Enter username: ")
@@ -109,11 +131,11 @@ def login_sys(username, password):
     users = read_users()
     for user in users:
         if user[0] == username and user[1] == password:
-            if user[3] == 'True':
-                print(f"Login successful. Welcome {user[0]} ({user[2]})")
-                if user[2] == 'superuser' :
+            if user[6] == 'True':
+                print(f"Login successful. Welcome {user[0]} ({user[5]})")
+                if user[5] == 'superuser' :
                     user_menu(user)  # Call user_menu with user details
-                elif user[2] == 'inventory' :
+                elif user[5] == 'inventory' :
                     inventory_menu()
 
             else:
@@ -151,12 +173,6 @@ def read_users():
     except FileNotFoundError:
         print("User details file not found.")
     return users
-def read_pending():
-    users = []
-    with open(Pending_approve, 'r') as file:
-        for line in file:
-            users.append(line.strip().split(','))
-    return users
 # Function to write users to file
 def write_users(users):
     with open(User_details, 'w') as file:
@@ -165,7 +181,7 @@ def write_users(users):
 
 
 # Function to sign up a new user
-def sign_up(username, password, role):
+def sign_up(username, password, phone_num, ic_passport, city,role):
     users = read_users()
     for user in users:
         if user[0] == username:
@@ -176,7 +192,7 @@ def sign_up(username, password, role):
     if role == 'superuser':
         approved = 'True'  # Superuser will be approved immediately
 
-    users.append([username, password, role, approved])
+    users.append([username, password, phone_num, ic_passport, city,role, approved,time()])
     write_users(users)
     print(f"User {username} signed up successfully. Awaiting approval.")
 
