@@ -419,7 +419,7 @@ def update_inventory(): #Function for update inventory
     print("Item not found in inventory.")
 
 def inventory_log(name,role,activity,details):
-    # Check the inventory file
+    # Check the inventory file.
     try:
         with open("inventory_log.txt", "a") as file:
             lines = file.readlines()
