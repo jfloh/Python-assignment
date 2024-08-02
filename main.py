@@ -60,8 +60,8 @@ def sign_up_process():
         else:
             print("Provide a valid city of domicile.")
     while True:
-        role = input("Enter role (customer/admin/superuser): ").lower().strip()
-        valid_roles = ['customer', 'admin', 'superuser']
+        role = input("Enter role (customer/admin/inventory/superuser): ").lower().strip()
+        valid_roles = ['customer', 'admin', 'superuser','inventory']
         if role.isdigit():
             print("Role cannot be a number. Please enter a valid role.")
         elif role in valid_roles:
@@ -287,6 +287,7 @@ def inquiry_sys_usage():
 
 #Inventory Management #LOH JIAN FENG #TP076480
 def inventory_menu(name, role):
+    inventory_log(name,role,"Log in","User logged in")
     while True:
         print("\nInventory Menu")
         print("1:Purchase \n2:Stock check \n3:Check purchase order status \n4:Purchase Cart \n5:Report \n6:EXIT ")
@@ -353,11 +354,11 @@ def purchase_inventory(name, role):
         if purchase_item.lower() == "exit":
             return None
         if purchase_item.lower() == "new" :
-            name = input("Enter item name: ")
+            item_name = input("Enter item name: ")
             quantity = int(input("Enter quantity: "))
             price = float(input("Enter price: "))
-            purchase_list.append((name, quantity, price,name, role,time()))
-            print(f"{name} added to purchase order.")
+            purchase_list.append((item_name, quantity, price,name, role,time()))
+            print(f"{item_name} added to purchase order.")
             addmore_option = input("Do you want to add more ? (Y/N)")
             if addmore_option.lower() == 'y':
                 continue
@@ -389,7 +390,6 @@ def purchase_inventory(name, role):
             print("Invalid input")
     if len(purchase_list) != 0 :
         purchase_summary(purchase_list)
-        return purchase_list
 def purchase_summary(purchase_list):
     total_purchase = 0
     for item in purchase_list:
@@ -417,6 +417,16 @@ def update_inventory(): #Function for update inventory
             #save_inventory(inventory_list)
             return
     print("Item not found in inventory.")
+
+def inventory_log(name,role,activity,details):
+    # Check the inventory file
+    try:
+        with open("inventory_log.txt", "a") as file:
+            lines = file.readlines()
+    except FileNotFoundError:
+        print("Log file not found.")
+        return
+
 if __name__ == "__main__":
     main_menu()
 
