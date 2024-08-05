@@ -85,7 +85,6 @@ def approve_user_process():
     username = input("Enter username to approve: ")
     approve_user(super_user, username)
 def time():
-    from datetime import datetime
     now = datetime.now()
     date_string = now.strftime('%Y-%m-%d %H:%M:%S')
     return date_string
@@ -97,10 +96,10 @@ def user_menu(user):
     while True:
         print(f"User Menu - {user[0]} ({user[2]})")
         print("1. Check Customer Order Status")
-        if user[2] in ['superuser', 'admin']:
+        if user[5] in ['superuser', 'admin']:
             print("2. Verify New Customers")
             print("3. Reports")
-        if user[2] == 'superuser':
+        if user[5] == 'superuser':
             print("4. Add Users")
             print("5. Modify User Personal Details")
             print("6. Disable User Access")
@@ -110,45 +109,47 @@ def user_menu(user):
 
         choice = input("Enter your choice: ")
 
-        if choice == '8':
+        if choice == '9':
             print("Exiting the system.")
             break
         elif choice == '1':
             check_order_status()
-        elif choice == '2' and user[2] in ['superuser', 'admin']:
-            verify_new_customer(user[2])
-        elif choice == '3' and user[2] in ['superuser', 'admin']:
+        elif choice == '2' and user[5] in ['superuser', 'admin']:
+            verify_new_customer(user[5])
+        elif choice == '3' and user[5] in ['superuser', 'admin']:
             generate_reports()
-        elif choice == '4' and user[2] == 'superuser':
+        elif choice == '4' and user[5] == 'superuser':
             add_user()
-        elif choice == '5' and user[2] == 'superuser':
+        elif choice == '5' and user[5] == 'superuser':
             modify_user_details()
-        elif choice == '6' and user[2] == 'superuser':
+        elif choice == '6' and user[5] == 'superuser':
             disable_user_access()
-        elif choice == '7' and user[2] == 'superuser':
+        elif choice == '7' and user[5] == 'superuser':
             inquiry_sys_usage()
-        elif choice == '8' and user[2] == 'superuser':
+        elif choice == '8' and user[5] == 'superuser':
             approve_user_process()
         else:
             print("Invalid choice. Please try again!")
 
 def login_sys(username, password):
     users = read_users()
+    print("Loaded users for debugging:")
+    for user in users:
+        print(user)  # Print each user for debugging
+
     for user in users:
         if user[0] == username and user[1] == password:
             if user[6] == 'True':
                 print(f"Login successful. Welcome {user[0]} ({user[5]})")
-                if user[5] == 'superuser' :
+                print(f"Role: {user[5]}") #For debugging
+                if user[5] == 'superuser':
                     user_menu(user)  # Call user_menu with user details
-                elif user[5] == 'inventory' :
+                elif user[5] == 'inventory':
                     inventory_menu(user[0],user[5])
-
             else:
                 print(f"User {username} is not approved yet. Please contact admin to approve...")
-
             return
     print("Invalid username or password.")
-
 # approval process
 def approve_user(super_user, username):
     users = read_users()
@@ -158,7 +159,7 @@ def approve_user(super_user, username):
 
     for user in users:
         if user[0] == username:
-            user[3] = 'True'
+            user[6] = 'True'
             write_users(users)
             print(f"User {username} approved successfully.")
             return
@@ -170,7 +171,7 @@ def read_users():
         with open(User_details, 'r') as file:
             for line in file:
                 user = line.strip().split(',')
-                if len(user) == 4:  # Ensure there are exactly 4 fields
+                if len(user) == 8:  # Ensure there are exactly 8 fields
                     users.append(user)
                 else:
                     print(f"Skipping invalid user entry: {line.strip()}")
@@ -219,7 +220,7 @@ def verify_new_customer(role):
         return
 
     users = read_users()
-    pending_users = [user for user in users if user[3] == 'False']
+    pending_users = [user for user in users if user[6] == 'False']
     if not pending_users:
         print("No new customers to verify.")
         return
@@ -231,20 +232,23 @@ def verify_new_customer(role):
     approve_user(role, username)
 
 # Generate reports
+# Generate reports
 def generate_reports():
     print("Generating reports...")
-    with open("log.txt", "a") as logFile:
-        logFile.write(f"generate_reports, system, {datetime.datetime.now()}\n")
     try:
         users = read_users()
         for user in users:
             print(f"Username: {user[0]}, Role: {user[5]}, Active: {user[6]}, Datetime: {user[7]}")
+        write_log("generate_reports", "Generate user reports", "Success", "System", time())
     except FileNotFoundError:
         print("No user data found.")
+        write_log("generate_reports", "Generate user reports", "Failure", "System", time())
 
-def write_log(function,activity,status,user,datetime):
-    with open("log.txt","a") as logFile:
-        logFile.write(function,activity,status,user,datetime)
+# Function to write log
+def write_log(function, activity, status, user, datetime):
+    with open("log.txt", "a") as logFile:
+        logFile.write(f"{function},{activity},{status},{user},{datetime}\n")
+
 # Add user for user_menu()
 def add_user():
     print("Adding user...")
@@ -260,40 +264,37 @@ def modify_user_details():
     users = read_users()
     for user in users:
         if user[0] == username:
-            new_username = input("Enter new username: ")
-            new_password = input("Enter new password: ")
-            new_role = input("Enter new role: ").lower()
-            user[0] = new_username
-            user[1] = new_password
-            user[2] = new_role
+            user[2] = input(f"Enter new phone number for {username} (current: {user[2]}): ")
+            user[3] = input(f"Enter new IC/Passport number for {username} (current: {user[3]}): ")
+            user[4] = input(f"Enter new city for {username} (current: {user[4]}): ")
             write_users(users)
-            print("User details updated successfully.")
+            print(f"Details for {username} updated successfully.")
             return
-    print("User not found.")
-#
+    print(f"User {username} not found.")
+
 # Disable user access
 def disable_user_access():
     print("Disabling user access...")
-    username = input("Enter the username of the user to disable: ")
+    username = input("Enter the username to disable: ")
     users = read_users()
     for user in users:
         if user[0] == username:
-            user[3] = 'False'
+            user[6] = 'False'
             write_users(users)
-            print("User access disabled successfully.")
+            print(f"Access for {username} disabled successfully.")
             return
-    print("User not found.")
+    print(f"User {username} not found.")
 
 # Inquiry of User's System Usage
 def inquiry_sys_usage():
     print("Inquiring user's system usage...")
     try:
         with open(SYSTEM_USAGE_FILE, 'r') as file:
-            usage_records = file.readlines()
-            for record in usage_records:
-                print(record.strip())
+            usage = file.readlines()
+            for entry in usage:
+                print(entry.strip())
     except FileNotFoundError:
-        print("No system usage details found.")
+        print("No system usage data found.")
 
 #Inventory Management #LOH JIAN FENG #TP076480
 def inventory_menu(name, role):
