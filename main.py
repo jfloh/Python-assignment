@@ -66,6 +66,9 @@ def time():
     date_string = now.strftime('%Y-%m-%d %H:%M:%S')
     return date_string
 
+#User Management
+#CHAI TIAN CHENG
+#TP075051
 def user_menu(user):
     while True:
         print(f"User Menu - {user[0]} ({user[2]})")
