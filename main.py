@@ -41,15 +41,37 @@ def sign_up_process():
             print("Passwords don't match, please try again")
         else:
             break
-    while True :
-        phone_num = input("Enter Phone number")
-        if phone_num in range(10,12):
+    while True:
+        phone_num = input("Enter phone number: ").strip()
+        if phone_num.isdigit() and 10 <= len(phone_num) <= 12:
             break
         else:
-            print("Provide a valid phone number")
+            print("Provide a valid phone number (10-12 digits).")
+    while True:
+        ic_passport = input("Enter IC/Passport number: ").strip()
+        if ic_passport.isdigit() and 12 <= len(ic_passport) <= 15:
+            break
+        else:
+            print("Provide a valid IC/Passport number (12-15 digits).")
+    while True:
+        city = input("Enter city of domicile: ").strip()
+        if len(city) > 0:
+            break
+        else:
+            print("Provide a valid city of domicile.")
+    while True:
+        role = input("Enter role (customer/admin/inventory/superuser): ").lower().strip()
+        valid_roles = ['customer', 'admin', 'superuser','inventory']
+        if role.isdigit():
+            print("Role cannot be a number. Please enter a valid role.")
+        elif role in valid_roles:
+            print(f"Role '{role}' is valid.")
+            break
+        else:
+            print("Invalid role. Please enter 'customer', 'admin', or 'superuser'.")
 
-    role = input("Enter role (customer/admin/superuser): ").lower()
-    sign_up(username, password, role)
+    sign_up(username, password, phone_num, ic_passport, city, role)
+    print("Signed up successfully. Awaiting approval process...")
 
 def login_process():
     username = input("Enter username: ")
@@ -112,20 +134,20 @@ def login_sys(username, password):
     users = read_users()
     for user in users:
         if user[0] == username and user[1] == password:
-            if user[3] == 'True':
-                print(f"Login successful. Welcome {user[0]} ({user[2]})")
-                if user[2] == 'superuser' :
+            if user[6] == 'True':
+                print(f"Login successful. Welcome {user[0]} ({user[5]})")
+                if user[5] == 'superuser' :
                     user_menu(user)  # Call user_menu with user details
-                elif user[2] == 'inventory' :
-                    inventory_menu()
+                elif user[5] == 'inventory' :
+                    inventory_menu(user[0],user[5])
 
             else:
-                print(f"User {username} is not approved yet.")
+                print(f"User {username} is not approved yet. Please contact admin to approve...")
 
             return
     print("Invalid username or password.")
 
-# Approval process
+# approval process
 def approve_user(super_user, username):
     users = read_users()
     if super_user not in ['superuser', 'admin']:
@@ -139,7 +161,6 @@ def approve_user(super_user, username):
             print(f"User {username} approved successfully.")
             return
     print(f"User {username} not found.")
-
 # Function to read users from file
 def read_users():
     users = []
@@ -154,12 +175,6 @@ def read_users():
     except FileNotFoundError:
         print("User details file not found.")
     return users
-def read_pending():
-    users = []
-    with open(Pending_approve, 'r') as file:
-        for line in file:
-            users.append(line.strip().split(','))
-    return users
 # Function to write users to file
 def write_users(users):
     with open(User_details, 'w') as file:
@@ -168,7 +183,7 @@ def write_users(users):
 
 
 # Function to sign up a new user
-def sign_up(username, password, role):
+def sign_up(username, password, phone_num, ic_passport, city,role):
     users = read_users()
     for user in users:
         if user[0] == username:
@@ -179,7 +194,7 @@ def sign_up(username, password, role):
     if role == 'superuser':
         approved = 'True'  # Superuser will be approved immediately
 
-    users.append([username, password, role, approved])
+    users.append([username, password, phone_num, ic_passport, city,role, approved,time()])
     write_users(users)
     print(f"User {username} signed up successfully. Awaiting approval.")
 
@@ -274,16 +289,17 @@ def inquiry_sys_usage():
         print("No system usage details found.")
 
 #Inventory Management #LOH JIAN FENG #TP076480
-def inventory_menu():
+def inventory_menu(name, role):
+    inventory_log(name,role,"Log in","User logged in")
     while True:
         print("\nInventory Menu")
         print("1:Purchase \n2:Stock check \n3:Check purchase order status \n4:Purchase Cart \n5:Report \n6:EXIT ")
         inventory_func = int(input("Enter the choice"))
         if inventory_func == 1:
-            display_inventory(read_inventory())
-            purchase_inventory()
+            purchase_inventory(name, role)
         elif inventory_func == 2:
            display_inventory(read_inventory())
+           update_inventory()
         elif inventory_func == 3 :
             continue
         elif inventory_func == 4 :
@@ -332,29 +348,42 @@ def display_inventory(inventory_data):
             print(f"{i}.{item[0]}:Quantity:{item[1]},Price:RM{item[2]:.2f}")
     else:
         print("Inventory is empty.")
-def purchase_inventory():
+def purchase_inventory(name, role):
     inventory_list= read_inventory()
     display_inventory(inventory_list)
     purchase_list = []
     while True:
-        purchase_item = input("""Enter item number to purchase, "new" for a new item, or "exit" to finish: """ )
-        if purchase_item.lower() == "exit" :
-            print("Exiting...")
-            break
+        purchase_item = input("""Enter item number to purchase, "new" for a new item, or "exit" to exit: """ )
+        if purchase_item.lower() == "exit":
+            return None
         if purchase_item.lower() == "new" :
-            name = input("Enter item name: ")
+            item_name = input("Enter item name: ")
             quantity = int(input("Enter quantity: "))
             price = float(input("Enter price: "))
-            purchase_list.append((name, quantity, price))
-            print(f"{name} added to inventory.")
+            purchase_list.append((item_name, quantity, price,name, role,time()))
+            print(f"{item_name} added to purchase order.")
+            addmore_option = input("Do you want to add more ? (Y/N)")
+            if addmore_option.lower() == 'y':
+                continue
+            elif addmore_option.lower() == 'n':
+                break
+            else:
+                print("Invalid")
         elif purchase_item.isnumeric():
             index_item = int(purchase_item) - 1
             if 0 <= index_item < len(inventory_list) :
                 item = inventory_list[index_item]
                 quantity = int(input(f"Enter quantity to purchase for {item[0]} "))
                 if quantity > 0 :
-                    purchase_list.append((item[0],quantity,item[2]))
+                    purchase_list.append((item[0],quantity,item[2],name, role,time()))
                     print(f"{item[0]}added to purchase list.")
+                    addmore_option = input("Do you want to add more ? (Y/N)")
+                    if addmore_option.lower()=='y' :
+                        continue
+                    elif addmore_option.lower()== 'n':
+                        break
+                    else :
+                        print("Invalid")
 
                 else :
                     print("Invalid quantity.")
@@ -363,13 +392,44 @@ def purchase_inventory():
         else :
             print("Invalid input")
     if len(purchase_list) != 0 :
-        print("Purchase Summary: ")
-        total_purchase = 0
-        for item in purchase_list:
-            total = item[1] * item[2]
-            purchase_list.append(total)
-            print(f"{item[0]}: Quantity:{item[1]},Cost per unit:RM{item[2]:.2f}, Total:RM{item[3]:.2f} ")
-        return purchase_list
+        purchase_summary(purchase_list)
+def purchase_summary(purchase_list):
+    total_purchase = 0
+    for item in purchase_list:
+        total = item[1] * item[2]
+        purchase_list.append(total)
+        print(f"{item[0]}: Quantity:{item[1]},Cost per unit:RM{item[2]:.2f}, Total:RM{item[3]:.2f} ")
+    return purchase_list
+
+def update_inventory(): #Function for update inventory
+    inventory_list = read_inventory()
+    while True:
+        initial_input_1 = input("Do you want to update inventory ?(Y/N) ")
+        if initial_input_1.lower() == 'y':
+            break
+        elif initial_input_1.lower() == 'n':
+            return None
+        else:
+            print("Invalid")
+    name = input("Enter item name: ")
+    for i, item in enumerate(inventory_list):
+        if item[0] == name:
+            new_quantity = int(input("Enter new quantity: "))
+            inventory_list[i] = (item[0], new_quantity, item[2])
+            print(f"{name} quantity updated to {new_quantity}.")
+            #save_inventory(inventory_list)
+            return
+    print("Item not found in inventory.")
+
+def inventory_log(name,role,activity,details):
+    # Check the inventory file.
+    try:
+        with open("inventory_log.txt", "a") as file:
+            lines = file.readlines()
+    except FileNotFoundError:
+        print("Log file not found.")
+        return
+
 if __name__ == "__main__":
     main_menu()
 
