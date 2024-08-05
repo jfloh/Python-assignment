@@ -231,19 +231,24 @@ def verify_new_customer(role):
 # Generate reports
 def generate_reports():
     print("Generating reports...")
+    with open("log.txt", "a") as logFile:
+        logFile.write(f"generate_reports, system, {datetime.datetime.now()}\n")
     try:
         users = read_users()
         for user in users:
-            print(f"Username: {user[0]}, Role: {user[2]}, Active: {user[3]}")
+            print(f"Username: {user[0]}, Role: {user[5]}, Active: {user[6]}, Datetime: {user[7]}")
     except FileNotFoundError:
         print("No user data found.")
 
+def write_log(function,activity,status,user,datetime):
+    with open("log.txt","a") as logFile:
+        logFile.write(function,activity,status,user,datetime)
 # Add user for user_menu()
 def add_user():
     print("Adding user...")
     username = input("Enter username for new user: ")
     password = input("Enter password for new user: ")
-    role = input("Enter role for new user (customer/admin/superuser): ").lower()
+    role = input("Enter role for new user (customer/admin/inventory/superuser): ").lower()
     sign_up(username, password, role)
 
 # Modify user details
