@@ -430,16 +430,61 @@ def update_inventory(name, role): #Function for update inventory
             #save_inventory(inventory_list)
             return
     print("Item not found in inventory.")
+def check_lowstock_check(name,role):
+    inventory_list = read_inventory(name,role)
+    lowstock_item =[]
 
+def log_menu():
+    try:
+        with open('inventory_log.txt', 'r') as inventory_log_file:
+    except FileNotFoundError:
+        print("Log file not found")
+
+    print("Log Menu: ")
+    print("1. Display Inventory Log")
+    print("2. Delete Inventory Log")
+    print("3. Back to Inventory Menu")
+    while True:
+        choice = input("Enter your choice: ")
+
+        if choice == '1':
+        # display_inventory_log()
+        elif choice == '2':
+            confirm = input("Are you sure you want to delete the entire log? (y/n): ")
+            if confirm.lower() == 'y':
+        # delete_inventory_log()
+        elif choice == '3':
+            break
+        else:
+            print("Invalid choice. Please try again.")
 #Record inventory activity in log file.
 def inventory_log(name,role,activity,details):
+    with open("inventory_log.txt", "a") as inventory_log_file:
+        activity_list = f"{name} , {role} , {activity} , {details} , {time()} \n"
+        inventory_log_file.write(activity_list)
+
+
+def display_inventory_log(name,role):
+    inventory_log(name,role,"Display log", "Displayed all log file")
     try:
-        with open("inventory_log.txt", "a") as inventory_log_file:
-            activity_list = f"{name} , {role} , {activity} , {details} , {time()} \n"
-            inventory_log_file.write(activity_list)
+        with open("inventory_log.txt", "r") as inventory_log_file:
+            log_contents = inventory_log_file.read()
     except FileNotFoundError:
         print("Log file not found.")
-        return
+
+    if len(log_contents) > 0 :
+        print("Inventory Log Report:")
+        print(log_contents)
+    else:
+        print("The inventory log is empty.")
+
+def delete_inventory_log(name,role):
+        with open('inventory_log.txt','a') as inventory_log_file :
+            inventory_log_file.write("")
+        print("Inventory log has been deleted")
+        inventory_log(name,role,"Delete log","ALL Inventory log deleted")
+
+
 #def save_inventory(inventory_list):
 
 if __name__ == "__main__":
