@@ -133,23 +133,20 @@ def user_menu(user):
 
 def login_sys(username, password):
     users = read_users()
-    print("Loaded users for debugging:")
-    for user in users:
-        print(user)  # Print each user for debugging
 
     for user in users:
         if user[0] == username and user[1] == password:
             if user[6] == 'True':
                 print(f"Login successful. Welcome {user[0]} ({user[5]})")
-                print(f"Role: {user[5]}") #For debugging
                 if user[5] == 'superuser':
                     user_menu(user)  # Call user_menu with user details
                 elif user[5] == 'inventory':
-                    inventory_menu(user[0],user[5])
+                    inventory_menu(user[0], user[5])
             else:
                 print(f"User {username} is not approved yet. Please contact admin to approve...")
             return
     print("Invalid username or password.")
+
 # approval process
 def approve_user(super_user, username):
     users = read_users()
@@ -174,10 +171,12 @@ def read_users():
                 if len(user) == 8:  # Ensure there are exactly 8 fields
                     users.append(user)
                 else:
-                    print(f"Skipping invalid user entry: {line.strip()}")
+                    # Skipping invalid user entry
+                    pass
     except FileNotFoundError:
         print("User details file not found.")
     return users
+
 # Function to write users to file
 def write_users(users):
     with open(User_details, 'w') as file:
