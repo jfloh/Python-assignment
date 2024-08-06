@@ -165,7 +165,7 @@ def approve_user(super_user, username):
             return
     print(f"User {username} not found.")
 # Function to read users from file
-def read_users():
+def  read_users():
     users = []
     try:
         with open(User_details, 'r') as file:
@@ -306,8 +306,8 @@ def inventory_menu(name, role):
         if inventory_func == 1:
             purchase_inventory(name, role)
         elif inventory_func == 2:
-           display_inventory(read_inventory())
-           update_inventory()
+           display_inventory(read_inventory(name, role),name, role)
+           update_inventory(name, role)
         elif inventory_func == 3 :
             continue
         elif inventory_func == 4 :
@@ -320,7 +320,7 @@ def inventory_menu(name, role):
         else:
            print("Invalid")
 #Reading inventory in list of list
-def read_inventory():
+def read_inventory(name, role):
     # Check the inventory file
     try:
         with open("inventory.txt", "r") as file:
@@ -346,19 +346,21 @@ def read_inventory():
             inventory_data.append((name, int(quantity), float(price)))
         except ValueError:
             print(f"Warning: Invalid data in line {i}. Skipping.")
+    inventory_log(name, role, "Read inventory", "Read inventory files")
     return inventory_data
 
 #Display the inventory stock
-def display_inventory(inventory_data):
+def display_inventory(inventory_data,name, role):
     if len(inventory_data) != 0 :
         print("Current Inventory:")
         for i, item in enumerate(inventory_data ,1): #Loop until printing all of the item
             print(f"{i}.{item[0]}:Quantity:{item[1]},Price:RM{item[2]:.2f}")
+        inventory_log(name, role, "Display", "Displayed inventory items")
     else:
         print("Inventory is empty.")
 def purchase_inventory(name, role):
-    inventory_list= read_inventory()
-    display_inventory(inventory_list)
+    inventory_list= read_inventory(name, role)
+    display_inventory(inventory_list,name, role)
     purchase_list = []
     while True:
         purchase_item = input("""Enter item number to purchase, "new" for a new item, or "exit" to exit: """ )
@@ -409,8 +411,8 @@ def purchase_summary(purchase_list):
         print(f"{item[0]}: Quantity:{item[1]},Cost per unit:RM{item[2]:.2f}, Total:RM{item[3]:.2f} ")
     return purchase_list
 
-def update_inventory(): #Function for update inventory
-    inventory_list = read_inventory()
+def update_inventory(name, role): #Function for update inventory
+    inventory_list = read_inventory(name, role)
     while True:
         initial_input_1 = input("Do you want to update inventory ?(Y/N) ")
         if initial_input_1.lower() == 'y':
@@ -419,24 +421,26 @@ def update_inventory(): #Function for update inventory
             return None
         else:
             print("Invalid")
-    name = input("Enter item name: ")
+    item_name = input("Enter item name: ")
     for i, item in enumerate(inventory_list):
-        if item[0] == name:
+        if item[0] == item_name:
             new_quantity = int(input("Enter new quantity: "))
             inventory_list[i] = (item[0], new_quantity, item[2])
-            print(f"{name} quantity updated to {new_quantity}.")
+            print(f"{item_name} quantity updated to {new_quantity}.")
             #save_inventory(inventory_list)
             return
     print("Item not found in inventory.")
 
+#Record inventory activity in log file.
 def inventory_log(name,role,activity,details):
-    # Check the inventory file.
     try:
-        with open("inventory_log.txt", "a") as file:
-            lines = file.readlines()
+        with open("inventory_log.txt", "a") as inventory_log_file:
+            activity_list = f"{name} , {role} , {activity} , {details} , {time()} \n"
+            inventory_log_file.write(activity_list)
     except FileNotFoundError:
         print("Log file not found.")
         return
+#def save_inventory(inventory_list):
 
 if __name__ == "__main__":
     main_menu()
