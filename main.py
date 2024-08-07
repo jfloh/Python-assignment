@@ -21,6 +21,7 @@ def main_menu():
         else:
             print("Invalid choice. Please try again!\n")
 def sign_up_process():
+    # Collect and validate user input
     # Loop until a valid username is provided
     while True:
         username = input("Enter username: ")
@@ -230,7 +231,7 @@ def verify_new_customer(role):
     username = input("Enter username to approve: ")
     approve_user(role, username)
 
-# Generate reports
+
 # Generate reports
 def generate_reports():
     print("Generating reports...")
