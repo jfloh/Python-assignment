@@ -106,11 +106,13 @@ def user_menu(user):
             print("6. Disable User Access")
             print("7. Inquiry of User’s system usage")
             print("8. Approve User")
-        print("9. Exit")
+        if user[5] == 'inventory':
+            print("9. Inventory Staff Menu")
+        print("10. Exit")
 
         choice = input("Enter your choice: ")
 
-        if choice == '9':
+        if choice == '10':
             print("Exiting the system.")
             break
         elif choice == '1':
@@ -129,6 +131,8 @@ def user_menu(user):
             inquiry_sys_usage()
         elif choice == '8' and user[5] == 'superuser':
             approve_user_process()
+        elif choice == '9' and user[5] == 'inventory':
+            inventory_menu()
         else:
             print("Invalid choice. Please try again!")
 
