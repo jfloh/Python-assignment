@@ -260,6 +260,7 @@ def add_user():
     password = input("Enter password for new user: ")
     role = input("Enter role for new user (customer/admin/inventory/superuser): ").lower()
     sign_up(username, password, role)
+    print("User added.")
 
 # Modify user details
 def modify_user_details():
