@@ -147,7 +147,7 @@ def login_sys(username, password):
                 if user[5] in ['superuser', 'admin', 'inventory']:  # Call user_menu for superuser, admin, and inventory
                     user_menu(user)  # Call user_menu with user details
             else:
-                print(f"User {username} is not approved yet. Please contact admin to approve...")
+                print(f"User {username} is not approved yet. Please contact admin to approve...") #
             return
     print("Invalid username or password.")
 
