@@ -94,7 +94,7 @@ def time():
 #User Management
 #CHAI TIAN CHENG
 #TP075051
-def user_menu(user):
+def user_menu(user, role):
     while True:
         print(f"User Menu - {user[0]} ({user[2]})")
         print("1. Check Customer Order Status")
@@ -257,7 +257,9 @@ def add_user():
     print("Adding user...")
     username = input("Enter username for new user: ")
     password = input("Enter password for new user: ")
+    phone_num = input("Enter phone number for new user")
     role = input("Enter role for new user (customer/admin/inventory/superuser): ").lower()
+    ic_passport = input("")
     sign_up([username, password, phone_num, ic_passport, city,role, approved,time()])
     print("User added.")
 
@@ -505,7 +507,7 @@ def log_menu(name,role):
             print("Invalid choice. Please try again.")
 #Record inventory activity in log file.
 def inventory_log(name,role,activity,details):
-    with open("inventory_log.txt", "a") as inventory_log_file:
+    with open("inventory_log.txt", "a") as inventory_log_file:t
         activity_list = f"{name} , {role} , {activity} , {details} , {time()} \n"
         inventory_log_file.write(activity_list)
 
