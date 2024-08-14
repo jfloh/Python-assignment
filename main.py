@@ -132,7 +132,7 @@ def user_menu(user):
         elif choice == '8' and user[5] == 'superuser':
             approve_user_process()
         elif choice == '9' and user[5] == 'inventory':
-            inventory_menu()
+            inventory_menu(user[0],user[5])
         else:
             print("Invalid choice. Please try again!")
 
@@ -303,23 +303,26 @@ def inquiry_sys_usage():
 
 #Inventory Management #LOH JIAN FENG #TP076480
 def inventory_menu(name, role):
+    lowstock_threshold = 3
     inventory_log(name,role,"Log in","User logged in")
     while True:
         print("\nInventory Menu")
-        print("1:Purchase \n2:Stock check \n3:Check purchase order status \n4:Purchase Cart \n5:Report \n6:EXIT ")
+        print("1:Purchase \n2:Stock check \n3:Check purchase order status \n4:Purchase Cart \n5:Report \n6:Change Low stock threshold \n7:EXIT ")
         inventory_func = int(input("Enter the choice"))
         if inventory_func == 1:
-            purchase_inventory(name, role)
+            purchase_inventory(name, role,lowstock_threshold)
         elif inventory_func == 2:
-           display_inventory(read_inventory(name, role),name, role)
+           display_inventory(read_inventory(name, role),name, role,lowstock_threshold)
            update_inventory(name, role)
         elif inventory_func == 3 :
             continue
         elif inventory_func == 4 :
             continue
         elif inventory_func == 5 :
-            continue
+            log_menu(name,role)
         elif inventory_func == 6:
+            lowstock_threshold=change_threshold(name,role,lowstock_threshold)
+        elif inventory_func == 7:
            print("Exiting...")
            break
         else:
@@ -331,13 +334,14 @@ def read_inventory(name, role):
         with open("inventory.txt", "r") as file:
             lines = file.readlines()
     except FileNotFoundError:
+        inventory_log(name, role, "Read inventory", "Failed to read inventory files")
         print("Inventory file not found.")
         return
 
     inventory_data = []
-    for i, line in enumerate(lines, 1):
-        line = line.strip()
-        if not line:
+    for i, line in enumerate(lines, 1):#Loop through the lines starting from 1
+        line = line.strip() #remove whitespace
+        if not line: #skip empty line
             continue
 
         try:
@@ -347,43 +351,51 @@ def read_inventory(name, role):
                 print(f"Warning: Invalid data in line {i}. Skipping.")
                 continue
             #Putting item in a list of list
-            name, quantity, price = columns
-            inventory_data.append((name, int(quantity), float(price)))
+            item_name, quantity, price = columns
+            inventory_data.append((item_name, int(quantity), float(price)))
         except ValueError:
             print(f"Warning: Invalid data in line {i}. Skipping.")
     inventory_log(name, role, "Read inventory", "Read inventory files")
     return inventory_data
 
 #Display the inventory stock
-def display_inventory(inventory_data,name, role):
+def display_inventory(inventory_data,name, role,lowstock_threshold):
+    inventory_log(name, role, "Display", "Displayed inventory items")
     if len(inventory_data) != 0 :
         print("Current Inventory:")
         for i, item in enumerate(inventory_data ,1): #Loop until printing all of the item
-            print(f"{i}.{item[0]}:Quantity:{item[1]},Price:RM{item[2]:.2f}")
-        inventory_log(name, role, "Display", "Displayed inventory items")
+            #Print low stock warning
+            low_stock_warning = ""
+            if item[1] <= lowstock_threshold :
+                low_stock_warning = "LOW STOCK !!!"
+            print(f"{i}.{item[0]}:Quantity:{item[1]},Price:RM{item[2]:.2f}{low_stock_warning}")
     else:
         print("Inventory is empty.")
-def purchase_inventory(name, role):
+def purchase_inventory(name, role,lowstock_threshold):
     inventory_list= read_inventory(name, role)
-    display_inventory(inventory_list,name, role)
+    display_inventory(inventory_list,name, role,lowstock_threshold)
     purchase_list = []
     while True:
         purchase_item = input("""Enter item number to purchase, "new" for a new item, or "exit" to exit: """ )
         if purchase_item.lower() == "exit":
             return None
         if purchase_item.lower() == "new" :
-            item_name = input("Enter item name: ")
-            quantity = int(input("Enter quantity: "))
-            price = float(input("Enter price: "))
-            purchase_list.append((item_name, quantity, price,name, role,time()))
-            print(f"{item_name} added to purchase order.")
-            addmore_option = input("Do you want to add more ? (Y/N)")
-            if addmore_option.lower() == 'y':
-                continue
-            elif addmore_option.lower() == 'n':
-                break
-            else:
-                print("Invalid")
+            while True :
+                item_name = input("Enter item name: ")
+                quantity = int(input("Enter quantity: "))
+                price = float(input("Enter price: "))
+                purchase_list.append((item_name, quantity, price,name, role,time()))
+                print(f"{item_name} added to purchase order.")
+                while True:
+                    addmore_option = input("Do you want to add more ? (Y/N)")
+                    if addmore_option.lower() == 'y':
+                        break
+                    elif addmore_option.lower() == 'n':
+                        break
+                    else:
+                        print("Invalid input. Please Enter Y or N only")
+                if addmore_option.lower() == 'n':
+                    break #break outter loop
         elif purchase_item.isnumeric():
             index_item = int(purchase_item) - 1
             if 0 <= index_item < len(inventory_list) :
@@ -410,10 +422,25 @@ def purchase_inventory(name, role):
         purchase_summary(purchase_list)
 def purchase_summary(purchase_list):
     total_purchase = 0
-    for item in purchase_list:
-        total = item[1] * item[2]
-        purchase_list.append(total)
-        print(f"{item[0]}: Quantity:{item[1]},Cost per unit:RM{item[2]:.2f}, Total:RM{item[3]:.2f} ")
+    for i, item in enumerate(purchase_list, 1): # start counting from 1
+        total_eachitem = item[1] * item[2]
+        total_purchase = total_eachitem + total_eachitem
+        print(f"{i},{item[0]}: Quantity:{item[1]},Cost per unit:RM{item[2]:.2f}, Total:RM{total_eachitem} ")
+    print(f"The total purchase amount is RM{total_purchase}")
+    while True:
+        payment_status = input("Pay now?(Y/N):")
+        if payment_status.lower() =='y':
+            payment_status = "PAID"
+            break
+        elif payment_status.lower() == 'n':
+            payment_status = "N"
+            break
+        else:
+            print("Invalid choice")
+    for i,item in enumerate(purchase_list):
+        total_cost = item[1] * item[2]
+        purchase_list[i] = item + (total_cost, payment_status)
+
     return purchase_list
 
 def update_inventory(name, role): #Function for update inventory
@@ -435,15 +462,30 @@ def update_inventory(name, role): #Function for update inventory
             #save_inventory(inventory_list)
             return
     print("Item not found in inventory.")
-def check_lowstock_check(name,role):
-    inventory_list = read_inventory(name,role)
-    lowstock_item =[]
 
-def log_menu():
-    try:
-        with open('inventory_log.txt', 'r') as inventory_log_file:
-    except FileNotFoundError:
-        print("Log file not found")
+def change_threshold(name,role,lowstock_threshold):
+    print(f"Current low stock threshold: {lowstock_threshold}")
+    while True:
+        try:
+            new_threshold = int(input("Enter new threshold (or 0 to keep current): "))
+            if new_threshold < 0:
+                print("Threshold must be a non-negative integer.")
+            elif new_threshold == 0:
+                print(f"Threshold remain the same ")
+                inventory_log(name, role, "Change threshold",f"Changed low stock threshold from{lowstock_threshold}to{lowstock_threshold}")
+                return lowstock_threshold
+            else:
+                print(f"New threshold set to {new_threshold}")
+                inventory_log(name,role,"Change threshold",f"Changed low stock threshold from{lowstock_threshold}to{new_threshold}")
+                return new_threshold
+        except ValueError:
+            print("Please enter a valid integer.")
+
+def log_menu(name,role):
+    # try:
+    #     with open('inventory_log.txt', 'r') as inventory_log_file:
+    # except FileNotFoundError:
+    #     print("Log file not found")
 
     print("Log Menu: ")
     print("1. Display Inventory Log")
@@ -453,11 +495,11 @@ def log_menu():
         choice = input("Enter your choice: ")
 
         if choice == '1':
-        # display_inventory_log()
+            display_inventory_log(name,role)
         elif choice == '2':
             confirm = input("Are you sure you want to delete the entire log? (y/n): ")
             if confirm.lower() == 'y':
-        # delete_inventory_log()
+              delete_inventory_log(name,role)
         elif choice == '3':
             break
         else:
@@ -473,13 +515,13 @@ def display_inventory_log(name,role):
     inventory_log(name,role,"Display log", "Displayed all log file")
     try:
         with open("inventory_log.txt", "r") as inventory_log_file:
-            log_contents = inventory_log_file.read()
+            log_data = inventory_log_file.read()
     except FileNotFoundError:
         print("Log file not found.")
 
-    if len(log_contents) > 0 :
+    if len(log_data) > 0 :
         print("Inventory Log Report:")
-        print(log_contents)
+        print(log_data)
     else:
         print("The inventory log is empty.")
 
@@ -487,7 +529,7 @@ def delete_inventory_log(name,role):
         with open('inventory_log.txt','a') as inventory_log_file :
             inventory_log_file.write("")
         print("Inventory log has been deleted")
-        inventory_log(name,role,"Delete log","ALL Inventory log deleted")
+        inventory_log(name,role,"Delete log", "ALL Inventory log deleted")
 
 
 #def save_inventory(inventory_list):
