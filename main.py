@@ -464,7 +464,7 @@ def purchase_summary(name, role, purchase_list):
     write_purchase_list(name, role ,purchase_list)
 def modify_or_cancel_order(name,role,purchase_file_data):
     for i, item in enumerate(purchase_file_data, 1):
-        print(f"{i}. Brand: {item[0]} Name: {item[1]}: Quantity: {item[2]}, Status: {item[7]}")
+        print(f"{i}. Brand: {item[0]} Name: {item[1]}: Quantity: {item[2]}, Status: {item[5]}")
     while True:
         modify_choice = int(input("Enter the item index you want to modify or cancel: "))- 1
         if 0 <= modify_choice < len(purchase_file_data):
@@ -476,7 +476,7 @@ def modify_or_cancel_order(name,role,purchase_file_data):
             print("Invalid item index.")
 
     while True:
-        modify_input = input("Enter 'm' to modify a order, 'c' to cancel a order:(or type 'exit' to quit):  ")
+        modify_input = input("Enter 'm' to modify a order, 'c' to cancel a order, 'r' as received :(or type 'exit' to quit):  ")
         if modify_input.lower() == 'm':
             while True :
                 new_quantity = input("Enter new quantity: ")
@@ -487,17 +487,21 @@ def modify_or_cancel_order(name,role,purchase_file_data):
                     price_per_item = purchase_file_data[modify_choice][3]#get price per item from the list of item index in 3th place
                     new_total = new_quantity * price_per_item
                     purchase_file_data[modify_choice][4] = new_total #assign new total to item index(modify_choice)list in 4th place
+                    break
                 else:
                     print("Invalid input. Please enter a non-negative number.")
+            write_purchase_list(name, role, purchase_file_data)
         elif modify_input.lower() == 'c':
             purchase_file_data.pop(modify_choice) #delete whole line in the data list
             print("Order has been canceled.")
+            write_purchase_list(name, role, purchase_file_data)
             break
         elif modify_input.lower() =='r': #mark item as received
             if purchase_file_data[modify_choice][7] == "PAID":
                 mark_item_received(name, role, purchase_file_data[modify_choice])
                 purchase_file_data.pop(modify_choice)  # Remove the received item from purchase list
                 print("Order has been marked as received and updated in the inventory.")
+                write_purchase_list(name, role, purchase_file_data)
             else:
                 print("Only paid orders can be marked as received.")
             break
@@ -505,7 +509,6 @@ def modify_or_cancel_order(name,role,purchase_file_data):
             return None
         else:
             print("Invalid input")
-    write_purchase_list(purchase_file_data)
 def mark_item_received(name, role, item):
     inventory_list = read_inventory(name, role)
     item_found = False
