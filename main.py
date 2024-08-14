@@ -623,9 +623,9 @@ def update_inventory(name, role): #Function for update inventory
     write_inventory(inventory_list)
 
 
-def write_inventory(inventory):
+def write_inventory(inventory_list):
     with open("inventory.txt", "w") as file:
-        for item in inventory:
+        for item in inventory_list:
             file.write(f"{item[0]},{item[1]},{item[2]},{item[3]}\n")
 def change_threshold(name,role,lowstock_threshold):
     print(f"Current low stock threshold: {lowstock_threshold}")
