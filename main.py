@@ -94,7 +94,7 @@ def time():
 #User Management
 #CHAI TIAN CHENG
 #TP075051
-def user_menu(user, role):
+def user_menu(user):
     while True:
         print(f"User Menu - {user[0]} ({user[2]})")
         print("1. Check Customer Order Status")
