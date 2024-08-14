@@ -310,7 +310,7 @@ def inventory_menu(name, role):
     inventory_log(name,role,"Log in","User logged in")
     while True:
         print("\nInventory Menu")
-        print("1:Purchase \n2:Stock check/update \n3:Check purchase order status \n4:Purchase Cart \n5:Report(System Log) \n6:Change Low stock threshold \n7:EXIT ")
+        print("1:Purchase \n2:Stock check/update \n3:Check purchase order status \n4:Modify purchase order  \n5:Report(System Log) \n6:Change Low stock threshold \n7:EXIT ")
         inventory_func = int(input("Enter the choice"))
         if inventory_func == 1:
             purchase_inventory(name, role,lowstock_threshold)
@@ -318,9 +318,12 @@ def inventory_menu(name, role):
            display_inventory(read_inventory(name, role),name, role,lowstock_threshold)
            update_inventory(name, role)
         elif inventory_func == 3 :
-            continue
+            display_purchase_order(name,role,read_purchase_list(name,role))
         elif inventory_func == 4 :
-            continue
+            if role == 'inventory':
+                modify_or_cancel_order(name,role,read_purchase_list(name,role))
+            else:
+                print("Only Inventory staff can modify the purchase order")
         elif inventory_func == 5 :
             log_menu(name,role)
         elif inventory_func == 6:
@@ -355,9 +358,9 @@ def read_inventory(name, role):
                 continue
             #Putting item in a list of list
             brand,item_name, quantity, price = columns
-            inventory_data.append((brand,item_name, int(quantity), float(price)))
+            inventory_data.append([brand,item_name, int(quantity), float(price)])
         except ValueError:
-            print(f"Warning: Invalid data in line {i}. Skipping.")
+            print(f"Warning: Invalid value in line {i}. Skipping.")
     inventory_log(name, role, "Read inventory", "Read inventory files")
     return inventory_data
 
@@ -378,13 +381,22 @@ def display_inventory(inventory_data,name, role,lowstock_threshold):
             print(f"{i}.Brand: {item[0]}, Item name: {item[1]}, Quantity: {item[2]}, Price: RM{item[3]:.2f} {low_stock_warning}")
         if role in ['superuser','inventory']:
             print(f"Total value of inventory is {total_inventory}")
-
     else:
         print("Inventory is empty.")
+def display_purchase_order(name,role,purchase_file_data):
+    inventory_log(name, role, "Display purchase file", "Displayed purchase file items")
+    if len(purchase_file_data) != 0:
+        print("Current Inventory:")
+        for i, item in enumerate(purchase_file_data, 1):
+            print(
+                f"{i}.Brand: {item[0]}, Item name: {item[1]}, Quantity: {item[2]}, Price per unit: RM{item[3]:.2f},Total: {item[4]},Status:{item[5]},Ordered by: {item[6]},Role: {item[7]},At: {item[8]}")
+    else:
+        print("Purchase file is empty")
 def purchase_inventory(name, role,lowstock_threshold):
     inventory_list= read_inventory(name, role)
     display_inventory(inventory_list,name, role,lowstock_threshold)
-    purchase_list = []
+    purchase_list =read_purchase_list(name, role)
+    section_purchase_list =[]
     while True:
         purchase_item = input("""Enter item number to purchase, "new" for a new item, or "exit" to exit: """ )
         if purchase_item.lower() == "exit":
@@ -395,14 +407,14 @@ def purchase_inventory(name, role,lowstock_threshold):
                 item_name = input("Enter item name: ")
                 quantity = int(input("Enter quantity: ")) #validation
                 price = float(input("Enter price per item : "))
-                purchase_list.append((manufacture_brand,item_name, quantity, price,name,role))
+                section_purchase_list.append([manufacture_brand,item_name, quantity, price,name,role])
                 print(f"{item_name} added to purchase order.")
                 while True:
                     addmore_option = input("Do you want to add more ? (Y/N)")
                     if addmore_option.lower() == 'y':
                         break
                     elif addmore_option.lower() == 'n':
-                        return purchase_summary(name, role,purchase_list)
+                        return purchase_summary(name, role,section_purchase_list)
                     else:
                         print("Invalid input. Please Enter Y or N only")
 
@@ -412,13 +424,13 @@ def purchase_inventory(name, role,lowstock_threshold):
                 item = inventory_list[index_item]
                 quantity = int(input(f"Enter quantity to purchase for {item[0]} "))
                 if quantity > 0 :
-                    purchase_list.append((item[1],quantity,item[3],name, role))
+                    section_purchase_list.append([item[1],quantity,item[3],name, role])
                     print(f"{item[0]}added to purchase list.")
                     addmore_option = input("Do you want to add more ? (Y/N)")
                     if addmore_option.lower()=='y' :
                         continue
                     elif addmore_option.lower()== 'n':
-                        return purchase_summary(name, role,purchase_list)
+                        return purchase_summary(name, role,section_purchase_list)
                     else :
                         print("Invalid")
 
@@ -428,14 +440,12 @@ def purchase_inventory(name, role,lowstock_threshold):
                 print("Invalid item number")
         else :
             print("Invalid input")
-    # if len(purchase_list) != 0 :
-    #     purchase_summary(name,role,purchase_list)
 def purchase_summary(name, role, purchase_list):
     total_purchase = 0
     for i, item in enumerate(purchase_list, 1): # start counting from 1
         total_eachitem = item[2] * item[3]
-        total_purchase = total_eachitem + total_eachitem
-        print(f"{i},{item[0]}: Quantity:{item[1]},Cost per unit:RM{item[2]:.2f}, Total:RM{total_eachitem} ")
+        total_purchase = total_purchase + total_eachitem
+        print(f"{i},{item[0]}: Quantity:{item[2]},Cost per unit:RM{item[3]:.2f}, Total:RM{total_eachitem} ")
     print(f"The total purchase amount is RM{total_purchase}")
     while True:
         payment_status = input("Pay now?(Y/N):")
@@ -443,20 +453,83 @@ def purchase_summary(name, role, purchase_list):
             payment_status = "PAID"
             break
         elif payment_status.lower() == 'n':
-            payment_status = "N"
+            payment_status = "UNPAID"
             break
         else:
             print("Invalid choice")
     for i,item in enumerate(purchase_list):
         total_cost = item[2] * item[3]
-        purchase_list[i] = (item[0], item[1], item[2], item[3], total_cost, payment_status, name, role)
+        purchase_list[i] = [item[0], item[1], item[2], item[3], total_cost, payment_status, name, role]
 
-    write_purchase_list(name, role,purchase_list)
+    write_purchase_list(name, role ,purchase_list)
+def modify_or_cancel_order(name,role,purchase_file_data):
+    for i, item in enumerate(purchase_file_data, 1):
+        print(f"{i}. Brand: {item[0]} Name: {item[1]}: Quantity: {item[2]}, Status: {item[7]}")
+    while True:
+        modify_choice = int(input("Enter the item index you want to modify or cancel: "))- 1
+        if 0 <= modify_choice < len(purchase_file_data):
+            if purchase_file_data[modify_choice][7] == "PAID":
+                print("Cannot modify or cancel a paid order.")
+            else:
+                break
+        else:
+            print("Invalid item index.")
+
+    while True:
+        modify_input = input("Enter 'm' to modify a order, 'c' to cancel a order:(or type 'exit' to quit):  ")
+        if modify_input.lower() == 'm':
+            while True :
+                new_quantity = input("Enter new quantity: ")
+                if new_quantity.isnumeric() and int(new_quantity) >= 0 :
+                    new_quantity = int(new_quantity)
+                    purchase_file_data[modify_choice][2] = new_quantity #assign new quantity to item index(modify_choice)list in 2nd place
+                    # Recalculate the total cost
+                    price_per_item = purchase_file_data[modify_choice][3]#get price per item from the list of item index in 3th place
+                    new_total = new_quantity * price_per_item
+                    purchase_file_data[modify_choice][4] = new_total #assign new total to item index(modify_choice)list in 4th place
+                else:
+                    print("Invalid input. Please enter a non-negative number.")
+        elif modify_input.lower() == 'c':
+            purchase_file_data.pop(modify_choice) #delete whole line in the data list
+            print("Order has been canceled.")
+            break
+        elif modify_input.lower() =='r': #mark item as received
+            if purchase_file_data[modify_choice][7] == "PAID":
+                mark_item_received(name, role, purchase_file_data[modify_choice])
+                purchase_file_data.pop(modify_choice)  # Remove the received item from purchase list
+                print("Order has been marked as received and updated in the inventory.")
+            else:
+                print("Only paid orders can be marked as received.")
+            break
+        elif modify_input.lower()=='exit':
+            return None
+        else:
+            print("Invalid input")
+    write_purchase_list(purchase_file_data)
+def mark_item_received(name, role, item):
+    inventory_list = read_inventory(name, role)
+    item_found = False
+
+    # Check if the item already exists in the inventory
+    for inventory_item in inventory_list:
+        if inventory_item[0] == item[0] and inventory_item[1] == item[1]:
+            inventory_item[2] += item[2]  # Update quantity
+            item_found = True
+            break
+
+    if not item_found: # If item does not exist in inventory, append it as a new item
+        inventory_list.append([item[0], item[1], item[2], item[3]])
+
+    # Write the updated inventory back to the file
+    write_inventory(inventory_list)
+    inventory_log(name, role, "Received Inventory", f"Item {item[1]} received with quantity {item[2]} and added to inventory.")
+    print(f"Item {item[1]} has been received and added to inventory.")
+
 def write_purchase_list(name,role,purchase_list):
     try:
-        with open("purchase_list.txt", "w") as file:
+        with open("purchase_list.txt", "a") as file:
             for item in purchase_list:
-                file.write(f"{item[0]},{item[1]},{item[2]},{item[3]},{item[4]},{item[5]},{item[6]},{time()}\n")
+                file.write(f"{item[0]},{item[1]},{item[2]},{item[3]},{item[4]},{item[5]},{item[6]},{item[7]},{time()}\n")
             inventory_log(name, role, "Writing in purchase order", "Added to item purchase order files")
     except FileNotFoundError:
         inventory_log(name, role, "Writing in purchase order", "Failed to write purchase order files")
@@ -480,15 +553,15 @@ def read_purchase_list(name, role):
         try:
             columns = line.split(",")
             #Validating the data
-            if len(columns) != 4:
+            if len(columns) != 9:
                 print(f"Warning: Invalid data in line {i}. Skipping.")
                 continue
             #Putting item in a list of list
-            brand,item_name, quantity, price = columns
-            purchase_order_data.append((brand,item_name, int(quantity), float(price)))
+            brand,item_name, quantity, price , total_price,status,name,role,time = columns
+            purchase_order_data.append([brand,item_name, int(quantity), float(price),float(total_price),status,name,role,time])
         except ValueError:
             print(f"Warning: Invalid data in line {i}. Skipping.")
-    inventory_log(name, role, "Read inventory", "Read inventory files")
+    inventory_log(name, role, "Read purchase order file", "Read purchase order file")
     return purchase_order_data
 def update_inventory(name, role): #Function for update inventory
     inventory_list = read_inventory(name, role)
@@ -541,7 +614,7 @@ def update_inventory(name, role): #Function for update inventory
                 print("Price cannot be negative. Please try again.")
         except ValueError:
             print("Invalid input. Please enter a valid number.")
-    inventory_list[index_item] = (new_manufacture_brand, new_item_name, new_quantity, new_price)
+    inventory_list[index_item] = [new_manufacture_brand, new_item_name, new_quantity, new_price]
     inventory_log(name, role, "Update Inventory", f"Updated Brand: {item[0]} to {new_manufacture_brand}, Item name: {item[1]} to {new_item_name}, Quantity: {item[2]} to {new_quantity}, Price :{item[3]} to {new_price} ")
     print(f"{item[0]} {item[1]} updated. New brand name: {new_manufacture_brand}, New name: {new_item_name} New quantity: {new_quantity}, New price per unit: {new_price}")
     write_inventory(inventory_list)
@@ -575,7 +648,6 @@ def read_threshold():
             return threshold
     except FileNotFoundError:
         print("Low Stock threshold file not found.")
-        return
 def save_threshold(threshold):
     with open("low_stock_threshold.txt", "w") as file:
         file.write(str(threshold))
@@ -607,10 +679,12 @@ def log_menu(name,role):
             print("Invalid choice. Please try again.")
 #Record inventory activity in log file.
 def inventory_log(name,role,activity,details):
-    with open("inventory_log.txt", "a") as inventory_log_file:
-        activity_list = (f"{name},{role},{activity},{details},{time()} \n")
-        inventory_log_file.write(activity_list)
-
+    try:
+        with open("inventory_log.txt", "a") as inventory_log_file:
+            activity_list = (f"{name},{role},{activity},{details},{time()} \n")
+            inventory_log_file.write(activity_list)
+    except FileNotFoundError:
+        print("Log file not found")
 
 def display_inventory_log(name,role,log_data):
     inventory_log(name,role,"Display log", "Displayed all log file")
