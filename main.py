@@ -1,5 +1,4 @@
 from datetime import datetime
-from os import name
 
 User_details = 'User_details.txt'
 ORDER_STATUS_FILE = 'Order_status.txt'
@@ -42,7 +41,7 @@ def sign_up_process():
             continue
         password1 = input("Re-enter your password: ")
         if password != password1:
-            print("Passwords don't match, please try again")
+            print("Passwords don't match, please try again!")
         else:
             break
     while True:
@@ -107,7 +106,7 @@ def user_menu(user):
             print("6. Disable User Access")
             print("7. Inquiry of User’s system usage")
             print("8. Approve User")
-        if user[5] == 'inventory':
+        if user[5] in ['inventory','superuser']:
             print("9. Inventory Staff Menu")
         print("10. Exit")
 
@@ -132,7 +131,7 @@ def user_menu(user):
             inquiry_sys_usage()
         elif choice == '8' and user[5] == 'superuser':
             approve_user_process()
-        elif choice == '9' and user[5] == 'inventory':
+        elif choice == '9' and user[5] == ['inventory','superuser']:
             inventory_menu(user[0],user[5])
         else:
             print("Invalid choice. Please try again!")
@@ -257,12 +256,12 @@ def add_user():
     print("Adding user...")
     username = input("Enter username for new user: ")
     password = input("Enter password for new user: ")
-    phone_num = input("Enter phone number for new user")
+    phone_num = input("Enter phone number for new user: ")
     role = input("Enter role for new user (customer/admin/inventory/superuser): ").lower()
     ic_passport = input("Enter IC or passport for new user:")
     city = input("Enter city for new user:")
     approved = 'True'
-    sign_up([username, password, phone_num, ic_passport, city,role, approved,time()])
+    sign_up(username, password, phone_num, ic_passport, city, role)
     print("User added.")
 
 # Modify user details

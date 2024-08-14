@@ -1,1 +1,7 @@
 JF , inventory , Log in , User logged in , 2024-08-06 14:02:52 
+JF , inventory , Log in , User logged in , 2024-08-14 10:21:18 
+JF , inventory , Read inventory , Read inventory files , 2024-08-14 10:21:24 
+JF , inventory , Display , Displayed inventory items , 2024-08-14 10:21:24 
+JF , inventory , Log in , User logged in , 2024-08-14 10:21:55 
+JF , inventory , Read inventory , Read inventory files , 2024-08-14 10:21:57 
+JF , inventory , Display , Displayed inventory items , 2024-08-14 10:21:57 
