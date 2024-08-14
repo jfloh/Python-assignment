@@ -131,7 +131,7 @@ def user_menu(user):
             inquiry_sys_usage()
         elif choice == '8' and user[5] == 'superuser':
             approve_user_process()
-        elif choice == '9' and user[5] == ['inventory','superuser']:
+        elif choice == '9' and user[5] in ['inventory','superuser']:
             inventory_menu(user[0],user[5])
         else:
             print("Invalid choice. Please try again!")
