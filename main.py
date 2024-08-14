@@ -259,7 +259,8 @@ def add_user():
     password = input("Enter password for new user: ")
     phone_num = input("Enter phone number for new user")
     role = input("Enter role for new user (customer/admin/inventory/superuser): ").lower()
-    ic_passport = input("")
+    ic_passport = input("Enter IC or passport for new user:")
+    city = input("Enter city for new user:")
     sign_up([username, password, phone_num, ic_passport, city,role, approved,time()])
     print("User added.")
 
@@ -507,7 +508,7 @@ def log_menu(name,role):
             print("Invalid choice. Please try again.")
 #Record inventory activity in log file.
 def inventory_log(name,role,activity,details):
-    with open("inventory_log.txt", "a") as inventory_log_file:t
+    with open("inventory_log.txt", "a") as inventory_log_file:
         activity_list = f"{name} , {role} , {activity} , {details} , {time()} \n"
         inventory_log_file.write(activity_list)
 
