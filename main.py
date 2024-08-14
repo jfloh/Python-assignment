@@ -1,4 +1,5 @@
 from datetime import datetime
+from os import name
 
 User_details = 'User_details.txt'
 ORDER_STATUS_FILE = 'Order_status.txt'
@@ -143,12 +144,10 @@ def login_sys(username, password):
         if user[0] == username and user[1] == password:
             if user[6] == 'True':
                 print(f"Login successful. Welcome {user[0]} ({user[5]})")
-                if user[5] == 'superuser':
+                if user[5] in ['superuser', 'admin', 'inventory']:  # Call user_menu for superuser, admin, and inventory
                     user_menu(user)  # Call user_menu with user details
-                elif user[5] == 'inventory':
-                    inventory_menu(user[0], user[5])
             else:
-                print(f"User {username} is not approved yet. Please contact admin to approve...")
+                print(f"User {username} is not approved yet. Please contact admin to approve...") #
             return
     print("Invalid username or password.")
 
@@ -259,7 +258,7 @@ def add_user():
     username = input("Enter username for new user: ")
     password = input("Enter password for new user: ")
     role = input("Enter role for new user (customer/admin/inventory/superuser): ").lower()
-    sign_up(username, password, role)
+    sign_up([username, password, phone_num, ic_passport, city,role, approved,time()])
     print("User added.")
 
 # Modify user details
