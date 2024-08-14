@@ -261,6 +261,7 @@ def add_user():
     role = input("Enter role for new user (customer/admin/inventory/superuser): ").lower()
     ic_passport = input("Enter IC or passport for new user:")
     city = input("Enter city for new user:")
+    approved = 'True'
     sign_up([username, password, phone_num, ic_passport, city,role, approved,time()])
     print("User added.")
 
