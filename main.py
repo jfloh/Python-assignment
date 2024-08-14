@@ -534,5 +534,5 @@ def delete_inventory_log(name,role):
 #def save_inventory(inventory_list):
 
 if __name__ == "__main__":
-    main_menu() #main
+    main_menu()
 
