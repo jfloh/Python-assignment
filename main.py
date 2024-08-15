@@ -752,7 +752,7 @@ def purchase_summary(name, role, purchase_list):
             break
         else:
             print("Invalid choice")
-    for i,item in enumerate(purchase_list):
+    for item in enumerate(purchase_list):
         total_cost = item[2] * item[3]
         purchase_list[i] = [item[0], item[1], item[2], item[3], total_cost, payment_status, name, role]
 
