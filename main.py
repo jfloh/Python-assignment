@@ -947,6 +947,7 @@ def read_threshold():
             return threshold
     except FileNotFoundError:
         print("Low Stock threshold file not found.")
+        return 0
 def save_threshold(threshold):
     with open("low_stock_threshold.txt", "w") as file:
         file.write(str(threshold))
@@ -991,9 +992,9 @@ def read_inventory_log(name,role):
                 if len(components) != 5: # Check if the line has exactly 5 components
                     print(f"Warning: Invalid data in line {i}. Skipping.")
                     continue
-                log_name,log_role,activity,detail,time = components
+                log_name,log_role,activity,detail,time = components #unpacks components to log_name,log_role,activity,detail,time
                 log_data.append([log_name,log_role,activity,detail,time])
-            except ValueError:
+            except:
                 print(f"Warning: Invalid value in line {i}. Skipping.")
     inventory_log(name,role,"Read Log","Read inventory log file")
     return log_data
