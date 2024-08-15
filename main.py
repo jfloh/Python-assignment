@@ -314,41 +314,101 @@ def inquiry_sys_usage():
 
 CUSTOMER_PURCHASE_LIST = 'customer_purchase.txt'
 
+
 def read_orders():
     orders = []
-    try:
-        with open(CUSTOMER_PURCHASE_LIST, 'r') as file:
-            for line in file:
-                order = line.strip().split(',')
-                if len(order) == 7:
-                    try:
-                        order_type = order[0]
-                        brand = order[1]
-                        item_name = order[2]
-                        quantity = int(order[3])
-                        price = float(order[4])
-                        paid = order[5] == 'True'
-                        status = order[6]
-
-                        order = (order_type, brand, item_name, quantity, price, paid, status)
-                        orders.append(order)
-                    except ValueError as e:
-                        print(f"Error processing line: {line}. Error: {e}")
-                else:
-                    print(f"Invalid line format: {line}")
-    except FileNotFoundError:
-        print(f"File '{CUSTOMER_PURCHASE_LIST}' not found.")
-    except IOError as e:
-        print(f"Error reading file: {e}")
+    with open(CUSTOMER_PURCHASE_LIST, 'r') as file:
+        for line in file:
+            parts = line.strip().split(',')
+            if len(parts) != 7:
+                print(f"Skipping invalid line (wrong number of fields): {line}")
+                continue
+            try:
+                # Convert elements to appropriate types
+                order = (
+                    parts[0],        # order_type (string)
+                    parts[1],        # brand (string)
+                    parts[2],        # item_name (string)
+                    int(parts[3]), # quantity (int)
+                    float(parts[4]),   # price (float)
+                    parts[5] == 'True', # paid (boolean)
+                    parts[6]         # status (string)
+                )
+                orders.append(order)
+            except ValueError:
+                print(f"Skipping invalid line format")
     return orders
+
+
 
 
 def write_customer_list(orders):
     with open(CUSTOMER_PURCHASE_LIST, 'w') as file:
         for order in orders:
-            order_type, brand, item_name, quantity, price, paid, status = order
-            paid_str = 'True' if paid else 'False'
-            file.write(f"{order_type},{brand},{item_name},{price},{quantity},{paid_str},{status}\n")
+            # Writing each order as a comma-separated string
+            file.write(','.join(map(str, order)) + '\n')
+
+
+def read_status():
+    orders = []
+    with open(ORDER_STATUS_FILE, 'r') as file:
+        for line in file:
+            parts = line.strip().split(',')
+            if len(parts) != 7:
+                print(f"Skipping invalid line (wrong number of fields): {line}")
+                continue
+            try:
+                # Convert elements to appropriate types
+                order = (
+                    parts[0],        # order_type (string)
+                    parts[1],        # brand (string)
+                    parts[2],        # item_name (string)
+                    int(parts[3]), # quantity (int)
+                    float(parts[4]),   # price (float)
+                    parts[5] == 'True', # paid (boolean)
+                    parts[6]         # status (string)
+                )
+                orders.append(order)
+            except ValueError :
+                print(f"Skipping invalid line format")
+    return orders
+
+def write_order_status(orders):
+    with open(ORDER_STATUS_FILE,'w') as file:
+        for order in orders:
+            file.write(','.join(map(str, order)) + '\n')
+
+
+# Function to deduct inventory based on customer order
+def deduct_inventory(order_list, name, role):
+    # Read the current inventory
+    inventory_list = read_inventory(name, role)
+
+    # Loop through the order items
+    for order_item in order_list:
+        ordered_brand, ordered_item_name, ordered_quantity = order_item[:3]
+        item_found = False
+        # Check the inventory to find the matching item
+        for inventory_item in inventory_list:
+            if inventory_item[0] == ordered_brand and inventory_item[1] == ordered_item_name:
+                # Check if the inventory has enough quantity to fulfill the order
+                if inventory_item[2] >= ordered_quantity:
+                    # Deduct the ordered quantity from the inventory
+                    inventory_item[2] -= ordered_quantity
+                    inventory_log(name, role, "Deduct Inventory", f"Deducted {ordered_quantity} of {ordered_item_name} from inventory.")
+                    print(f"Deducted {ordered_quantity} of {ordered_item_name} from inventory.")
+                else:
+                    print(f"Insufficient stock for {ordered_item_name}. Only {inventory_item[2]} available.")
+                    inventory_log(name, role, "Deduct Inventory Failed", f"Failed to deduct {ordered_quantity} of {ordered_item_name} - insufficient stock.")
+                item_found = True
+                break
+
+        if not item_found:
+            print(f"Item {ordered_item_name} not found in inventory.")
+            inventory_log(name, role, "Deduct Inventory Failed", f"Item {ordered_item_name} not found in inventory.")
+
+    # After deduction, write the updated inventory back to the file
+    write_inventory(inventory_list)
 
 
 def customer_menu(name, role, lowstock_threshold):
@@ -368,9 +428,9 @@ def customer_menu(name, role, lowstock_threshold):
         if choice == '1':
             place_order(name, role, lowstock_threshold)
         elif choice == '2':
-            place_service_order()
+            place_service_order(name, role)
         elif choice == '3':
-            modify_order()
+            modify_order(name, role, lowstock_threshold)
         elif choice == '4':
             make_payment()
         elif choice == '5':
@@ -378,7 +438,7 @@ def customer_menu(name, role, lowstock_threshold):
         elif choice == '6':
             cancel_order()
         elif choice == '7':
-            generate_reports()
+            generate_reports_customer()
         elif choice == '8':
             print("Logging out.")
             break
@@ -387,26 +447,27 @@ def customer_menu(name, role, lowstock_threshold):
 
 
 def place_order(name, role, lowstock_threshold):
-    # Display the current inventory to the customer
     inventory_list = read_inventory(name, role)
     display_inventory(inventory_list, name, role, lowstock_threshold)
 
-    # Allow the customer to input their order
     while True:
         item_index = input("Enter item number to order (or 'exit' to cancel): ")
         if item_index.lower() == 'exit':
-            return None
+            return
         elif item_index.isnumeric():
             item_index = int(item_index) - 1
             if 0 <= item_index < len(inventory_list):
                 item = inventory_list[item_index]
+                # Check if the selected item is sold out
+                if item[2] == 0:
+                    print(f"Sorry, {item[1]} is sold out.")
+                    return  # Exit the order process if the item is sold out
                 break
             else:
                 print("Invalid item number.")
         else:
             print("Invalid input.")
 
-    # Ask for the quantity of the item they wish to order
     while True:
         quantity = input("Enter quantity: ")
         if quantity.isnumeric() and int(quantity) > 0:
@@ -414,95 +475,146 @@ def place_order(name, role, lowstock_threshold):
             if quantity <= item[2]:
                 break
             else:
-                print("Insufficient stock available for this item.")
+                print("Insufficient stock available.")
         else:
             print("Invalid quantity.")
 
-    # Calculate the total price
     total_price = item[3] * quantity
-
-    # Create an order list: [order_type, brand, item_name, quantity, price, paid, status]
     order = ['Preorder', item[1], item[0], quantity, item[3], False, 'Pending']
+    orders = read_orders()
+    orders.append(order)
+    write_customer_list(orders)
 
-    # Add the order to the list of orders
-    orders = read_orders()  # Read current orders
-    orders.append(order)    # Add new order
-    write_customer_list(orders)  # Write all orders back to the file
+    print(f"Order placed: {quantity}x {item[0]} {item[1]} for RM{total_price:.2f}.")
 
-    print(f"Order placed successfully! You ordered {quantity}x {item[1]} for a total of RM{total_price:.2f}.")
+    # Deduct the ordered items from inventory
+    order_list = [[item[0], item[1], quantity]]  # Create a list of the order details
+    deduct_inventory(order_list, name, role)  # Deduct inventory after placing order
 
-def place_service_order(inventory_list, display_inventory):
-    orders = read_orders()  # Read current orders
-    if not orders:
-        print("No orders available to repair.")
-        return
 
-    item = input("Enter the item you want to repair: ").lower()
-
-    # Check if the item exists and has a paid order
-    paid_orders = [order for order in orders if order[2].lower() == item and order[5] and order[0] == 'Preorder']
+def display_paid_orders():
+    # Read paid orders from the ORDER_STATUS_FILE
+    paid_orders = read_status()
 
     if not paid_orders:
-        print(f"No paid orders found for item '{item}'. Please ensure the item has a paid order before placing a service/repair order.")
+        print("No paid orders available.")
+        return []
+
+    print("Paid Orders:")
+    for i, order in enumerate(paid_orders, start=1):
+        print(f"{i}. Brand: {order[1]}, Item name: {order[2]}, Quantity: {order[3]}, Price per unit: RM{order[4]:.2f}, Status: {order[6]}")
+
+    return paid_orders
+
+def place_service_order(name, role):
+    # Read paid orders from the ORDER_STATUS_FILE
+    paid_orders = display_paid_orders()
+
+    if not paid_orders:
+        print("No paid orders available for repair.")
         return
 
-    # Calculate repair cost and time
-    item_details = next((i for i in inventory_list if i[0].lower() == item), None)
-    if item_details:
-        total_price = item_details[3] * 0.2  # Assume repair cost is 20% of the item price
-        repair_time = item_details[4]  # Assume the repair time is the fifth element
-        print(f"Total Price for repair: RM{total_price:.2f}")
-        print(f"Estimated repair time: {repair_time} days")
+    # Extract and display items from the paid orders
+    items_in_paid_orders = list(set(order[2].strip().lower() for order in paid_orders))
+    if not items_in_paid_orders:
+        print("No items found in paid orders.")
+        return
 
-        # Create the repair order
-        new_order = ('Repair', item, 1, total_price, False, 'Pending')
-        orders.append(new_order)
-        write_customer_list(orders)
-        print("Service/Repair Order placed successfully!")
+    print("Items available for repair based on paid orders:")
+    for idx, item in enumerate(items_in_paid_orders, start=1):
+        print(f"{idx}. {item.capitalize()}")
+
+    # Get the item number to repair from the user
+    while True:
+        try:
+            item_number = int(input("Enter the number of the item you want to repair: "))
+            if 1 <= item_number <= len(items_in_paid_orders):
+                item = items_in_paid_orders[item_number - 1]
+                break
+            else:
+                print(f"Invalid choice. Please enter a number between 1 and {len(items_in_paid_orders)}.")
+        except ValueError:
+            print("Invalid input. Please enter a valid integer.")
+
+    # Show the current item details
+    print(f"Selected item: {item.capitalize()}")
+
+    # Read inventory and check for item details
+    inventory_list = read_inventory(name, role)
+    # Debugging: print inventory_list to check its content
+    print(f"Inventory List: {inventory_list}")
+
+    # Convert inventory item names to lowercase for comparison
+    item_details = next((i for i in inventory_list if i[0].strip().lower() == item), None)
+
+    if item_details:
+        # Debugging: print item_details to check its structure
+        print(f"Item details: {item_details}")
+
+        try:
+            # Correct indexes based on the structure of item_details
+            price = item_details[3]  # Assuming this is the price
+            repair_price = price * 0.2
+            print(f"Repair cost: RM{repair_price:.2f}")
+
+            # Create a new service/repair order
+            new_order = ('Repair', item, name, 1, repair_price, False, 'Pending')
+            orders = read_orders()
+            orders.append(new_order)
+            write_customer_list(orders)
+            print("Service/Repair Order placed.")
+        except IndexError:
+            print("Error: Invalid index in item details.")
+        except TypeError:
+            print("Error: Invalid data type in item details.")
     else:
         print(f"Item '{item}' not found in inventory.")
 
-def modify_order(inventory_list, display_inventory):
-    orders = read_orders()  # Read current orders
+
+def modify_order(name, role, lowstock_threshold):
+    orders = read_orders()
     if not orders:
         print("No orders available to modify.")
         return
 
+    # Display the current orders to the user
     for i, order in enumerate(orders):
         print(f"Order {i + 1}: {order}")
 
     try:
-        order_number = int(input("Enter the order number to modify: ")) - 1
+        order_number = int(input("Enter order number to modify: ")) - 1
         order = orders[order_number]
     except (ValueError, IndexError):
         print("Invalid order number.")
         return
 
-    if order[5]:  # Check if the order is paid
+    if order[5]:
         print("Cannot modify a paid order.")
         return
 
-    display_inventory(inventory_list)  # Display the inventory to allow selection
+    # Get the current inventory list
+    inventory_list = read_inventory(name, role)
+    display_inventory(inventory_list, name, role, lowstock_threshold)
 
     while True:
         item = input("Enter the new item: ").lower()
-        if any(i[0].lower() == item for i in inventory_list):
+        if any(item[0].lower() == item for i in inventory_list):
             break
         else:
             print("Item not found. Please enter a valid item.")
 
-    item_details = next((i for i in inventory_list if i[0].lower() == item), None)
+    item_details = next((i for i in inventory_list if item[0].lower() == item), None)
     if item_details:
         if order[0] == 'Preorder':
             while True:
                 try:
-                    quantity = int(input(f"Enter the new quantity of {item}: "))
+                    quantity = int(input(f"Enter new quantity (1-{item_details[2]}): "))
                     if 0 < quantity <= item_details[2]:
                         break
                     else:
-                        print(f"Invalid quantity. Please enter a number between 1 and {item_details[2]}.")
+                        print(f"Invalid quantity. Enter a number between 1 and {item_details[2]}.")
                 except ValueError:
-                    print("Please enter a valid number.")
+                    print("Invalid number. Please enter a valid integer.")
             total_price = item_details[3] * quantity
         else:
             quantity = 1
@@ -511,13 +623,14 @@ def modify_order(inventory_list, display_inventory):
         new_order = ('Preorder', item, quantity, total_price, False, 'Pending')
         orders[order_number] = new_order
         write_customer_list(orders)
-        print("Order modified successfully!")
+        print("Order modified successfully.")
     else:
         print(f"Item '{item}' not found in inventory.")
 
 
+
 def make_payment():
-    orders = read_orders()  # Read current orders
+    orders = read_orders()
     if not orders:
         print("No orders available to make payment.")
         return
@@ -526,32 +639,38 @@ def make_payment():
         print(f"Order {i + 1}: {order}")
 
     try:
-        order_number = int(input("Enter the order number to make payment: ")) - 1
+        order_number = int(input("Enter order number to pay: ")) - 1
+        if not (0 <= order_number < len(orders)):
+            print("Invalid order number.")
+            return
         order = orders[order_number]
     except (ValueError, IndexError):
         print("Invalid order number.")
         return
 
-    if order[5]:  # Check if the order is already paid
-        print("Order is already paid.")
+    if order[5]:
+        print("Order already paid.")
         return
 
     while True:
         try:
-            payment = float(input(f"Enter the payment amount for the order (RM{order[3]}): "))
-            if payment == order[3]:
-                orders[order_number] = (order[0], order[1], order[2], order[3], True, 'Paid')
-                write_customer_list(orders)
-                print("Payment successful!")
+            total_price = order[4] * order[3]  # Total price = unit price * quantity
+            payment = float(input(f"Enter payment (RM{total_price:.2f}): "))
+            if payment == total_price:
+                orders[order_number] = (order[0], order[1], order[2], order[3], order[4], True, 'Paid')
+                write_order_status(orders)
+                print("Payment successful.")
                 break
             else:
-                print(f"Payment must be exactly RM{order[3]:.2f}. Please try again.")
+                print(f"Payment must be RM{total_price:.2f}.")
         except ValueError:
-            print("Please enter a valid amount.")
+            print("Invalid amount.")
+
+
 
 
 def inquire_order_status():
-    orders = read_orders()  # Read current orders
+    orders = read_status()
     if not orders:
         print("No orders found.")
         return
@@ -560,8 +679,9 @@ def inquire_order_status():
     for order in orders:
         print(order)
 
+
 def cancel_order():
-    orders = read_orders()  # Read current orders
+    orders = read_orders()
     if not orders:
         print("No orders available to cancel.")
         return
@@ -570,25 +690,23 @@ def cancel_order():
         print(f"Order {i + 1}: {order}")
 
     try:
-        order_number = int(input("Enter the order number to cancel: ")) - 1
+        order_number = int(input("Enter order number to cancel: ")) - 1
         order = orders[order_number]
     except (ValueError, IndexError):
         print("Invalid order number.")
         return
 
-    if order[5]:  # Check if the order is paid
-        print("Cannot cancel a paid order. Money is non-refundable.")
+    if order[5]:
+        print("Cannot cancel a paid order.")
         return
 
-    # Remove the order from the in-memory list
     orders.pop(order_number)
-
-    # Write the remaining orders back to the file
     write_customer_list(orders)
-    print("Order cancelled successfully.")
+    print("Order cancelled.")
 
-def generate_reports():
-    orders = read_orders()  # Read current orders
+
+def generate_reports_customer():
+    orders = read_orders()
     if not orders:
         print("No orders found.")
         return
@@ -596,6 +714,8 @@ def generate_reports():
     print("\nReports:")
     for i, order in enumerate(orders):
         print(f"Order {i + 1}: {order}")
+
+
 
 
 
