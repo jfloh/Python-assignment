@@ -309,9 +309,12 @@ def inquiry_sys_usage():
     print("Inquiring user's system usage...")
     try:
         with open(SYSTEM_USAGE_FILE, 'r') as file:
-            usage = file.readlines()
-            for entry in usage:
-                print(entry.strip())
+            usage = file.readlines() # reads all lines from the file, stores them in the usage list
+            if not usage:
+                print("No system usage data found.")
+            else:
+                for entry in usage:
+                    print(entry.strip()) # remove whitespace
     except FileNotFoundError:
         print("No system usage data found.")
 
