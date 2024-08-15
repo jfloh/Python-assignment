@@ -1,2 +1,1 @@
-DEll,s409 Monitor,8,700.0,5600.0,UNPAID,JF,inventory
-Lenovo,Legion 7i ,6,800.0,4800.0,PAID,JF,inventory
+LENOVO,LEGION 5,8,900.0,JF,inventory,2024-08-14 21:10:02,7200.0
