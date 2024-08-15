@@ -783,8 +783,8 @@ def modify_cancel_received_order(name,role,purchase_file_data):
                         price_per_item = purchase_file_data[modify_choice][3]#get price per item from purchase_file_list[user input index(inner list)][4th element in the inner list]
                         new_total = new_quantity * price_per_item
                         purchase_file_data[modify_choice][4] = new_total #assign new total to purchase_file_list[user input index(inner list)][5th element in the inner list]
-                        print(f"Quantity of {item[0]} {item[1]} is changed to {new_quantity}")
-                        inventory_log(name,role,"Modify purchase order",f"Quantity of {item[0]} {item[1]} is changed to {new_quantity}")
+                        print(f"Quantity of {purchase_file_data[modify_choice][0]} {purchase_file_data[modify_choice][1]} is changed to {new_quantity}")
+                        inventory_log(name,role,"Modify purchase order",f"Quantity of {purchase_file_data[modify_choice][0]} {purchase_file_data[modify_choice][1]} is changed to {new_quantity}")
                         write_purchase_list(name, role, purchase_file_data)
                         return
                     else:
