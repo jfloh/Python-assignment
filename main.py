@@ -64,7 +64,7 @@ def sign_up_process():
             print("Provide a valid city of domicile.")
     while True:
         role = input("Enter role (customer/admin/inventory/superuser): ").lower().strip()
-        valid_roles = ['customer', 'admin', 'superuser','inventory']
+        valid_roles = ['customer', 'admin', 'superuser', 'inventory']
         if role.isdigit():
             print("Role cannot be a number. Please enter a valid role.")
         elif role in valid_roles:
@@ -90,9 +90,9 @@ def time():
     date_string = now.strftime('%Y-%m-%d %H:%M:%S')
     return date_string
 
-#User Management
-#CHAI TIAN CHENG
-#TP075051
+# User Management
+# CHAI TIAN CHENG
+# TP075051
 def user_menu(user):
     while True:
         print(f"User Menu - {user[0]} ({user[2]})")
@@ -106,7 +106,7 @@ def user_menu(user):
             print("6. Disable User Access")
             print("7. Inquiry of User’s system usage")
             print("8. Approve User")
-        if user[5] in ['inventory','superuser']:
+        if user[5] in ['inventory', 'superuser']:
             print("9. Inventory Staff Menu")
         print("10. Exit")
 
@@ -131,8 +131,8 @@ def user_menu(user):
             inquiry_sys_usage()
         elif choice == '8' and user[5] == 'superuser':
             approve_user_process()
-        elif choice == '9' and user[5] in ['inventory','superuser']:
-            inventory_menu(user[0],user[5])
+        elif choice == '9' and user[5] in ['inventory', 'superuser']:
+            inventory_menu(user[0], user[5])
         else:
             print("Invalid choice. Please try again!")
 
@@ -146,9 +146,9 @@ def login_sys(username, password):
                 if user[5] in ['superuser', 'admin', 'inventory']:  # Call user_menu for superuser, admin, and inventory
                     user_menu(user)  # Call user_menu with user details
                 elif user[5] == 'customer':
-                    customer_menu(user[0],user[5],read_threshold())
+                    customer_menu(user[0], user[5], read_threshold())
             else:
-                print(f"User {username} is not approved yet. Please contact admin to approve...") #
+                print(f"User {username} is not approved yet. Please contact admin to approve...")
             return
     print("Invalid username or password.")
 
@@ -190,7 +190,7 @@ def write_users(users):
 
 
 # Function to sign up a new user
-def sign_up(username, password, phone_num, ic_passport, city,role):
+def sign_up(username, password, phone_num, ic_passport, city, role):
     users = read_users()
     for user in users:
         if user[0] == username:
@@ -201,7 +201,7 @@ def sign_up(username, password, phone_num, ic_passport, city,role):
     if role == 'superuser':
         approved = 'True'  # Superuser will be approved immediately
 
-    users.append([username, password, phone_num, ic_passport, city,role, approved,time()])
+    users.append([username, password, phone_num, ic_passport, city, role, approved, time()])
     write_users(users)
     print(f"User {username} signed up successfully. Awaiting approval.")
 
@@ -318,7 +318,7 @@ def read_orders():
         with open(CUSTOMER_PURCHASE_LIST, 'r') as file:
             for line in file:
                 order = line.strip().split(',')
-                if len(order) == 6:
+                if len(order) == 7:
                     try:
                         order_type = order[0]
                         brand = order[1]
