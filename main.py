@@ -681,7 +681,7 @@ def display_inventory(inventory_data,name, role,lowstock_threshold):
 def display_purchase_order(name,role,purchase_file_data):
     inventory_log(name, role, "Display purchase file", "Displayed purchase file items")
     if len(purchase_file_data) != 0:
-        print("Current Inventory:")
+        print("Current purchase order:")
         for i, item in enumerate(purchase_file_data, 1):
             print(
                 f"{i}.Brand: {item[0]}, Item name:{item[1]}, Quantity:{item[2]}, Price per unit:RM{item[3]:.2f}, Total:{item[4]}, Status:{item[5]}, Ordered by:{item[6]}, Role:{item[7]}")
@@ -758,8 +758,7 @@ def purchase_summary(name, role, purchase_list):
 
     write_purchase_list(name, role ,purchase_list)
 def modify_cancel_received_order(name,role,purchase_file_data):
-    for i, item in enumerate(purchase_file_data, 1):
-        print(f"{i}. Brand: {item[0]} Name: {item[1]}: Quantity: {item[2]}, Status: {item[5]}")
+    display_purchase_order(name,role,purchase_file_data)
     while True:
         modify_choice = int(input("Enter the item index you want to modify ,cancel or mark as received: "))- 1
         if 0 <= modify_choice < len(purchase_file_data):
