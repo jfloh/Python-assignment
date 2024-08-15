@@ -520,7 +520,7 @@ def mark_item_received(name, role, item):
             item_found = True
             break
 
-    if not item_found: # If item does not exist in inventory, append it as a new item
+    if item_found == False: # If item does not exist in inventory, append it as a new item
         inventory_list.append([item[0], item[1], item[2], item[3]])
 
     # Write the updated inventory back to the file
@@ -655,11 +655,7 @@ def save_threshold(threshold):
     with open("low_stock_threshold.txt", "w") as file:
         file.write(str(threshold))
 def log_menu(name,role):
-    try:
-        with open('inventory_log.txt', 'r') as inventory_log_file:
-            log_data = inventory_log_file.read()
-    except FileNotFoundError:
-        print("Log file not found")
+    log_data = read_inventory_log()
 
     print("Log Menu: ")
     print("1. Display Inventory Log")
@@ -681,6 +677,30 @@ def log_menu(name,role):
         else:
             print("Invalid choice. Please try again.")
 #Record inventory activity in log file.
+def read_inventory_log():
+    try:
+        with open('inventory_log.txt', 'r') as inventory_log_file:
+            log_lines = inventory_log_file.read()#read all line
+            log_lines =log_lines.strip().split('\n') # Split content into lines
+    except FileNotFoundError:
+        print("Log file not found")
+        return
+    log_data = []
+    for i, line in enumerate(log_lines,1):
+            line = line.strip() #remove whitespace
+            if len(line) == 0 : #skip empty lines
+                continue
+            try:
+                components = line.split(",")#split the log components out
+                if len(components) != 5: # Check if the line has exactly 5 components
+                    print(f"Warning: Invalid data in line {i}. Skipping.")
+                    continue
+                name,role,activity,detail,time = components
+                log_data.append([name,role,activity,detail,time])
+            except ValueError:
+                print(f"Warning: Invalid value in line {i}. Skipping.")
+    inventory_log(name,role,"Read Log","Read inventory log file")
+    return log_data
 def inventory_log(name,role,activity,details):
     try:
         with open("inventory_log.txt", "a") as inventory_log_file:
@@ -693,15 +713,8 @@ def display_inventory_log(name,role,log_data):
     inventory_log(name,role,"Display log", "Displayed all log file")
     if len(log_data) > 0 :
         print("Inventory Log Report:")
-        log_line = log_data.strip().split('\n') #Remove whitespcae and split the line
-        for log_item in log_line: #Loop thru the log_line
-            log_components = log_item.split(',') #Split the components out
-            log_name = log_components[0]
-            log_role = log_components[1]
-            log_activity = log_components[2]
-            log_detail = log_components[3]
-            log_time = log_components[4]
-            print(f"Name: {log_name},Role: {log_role},Activity: {log_activity},Detail: {log_detail},At: {log_time}")
+        for log_item in log_data: #Loop thru the log_line
+            print(f"Name: {log_item[0]},Role: {log_item[1]},Activity: {log_item[2]},Detail: {log_item[3]},At: {log_item[4]}")
 
     else:
         print("The inventory log is empty.")
