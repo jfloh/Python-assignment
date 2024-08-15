@@ -730,6 +730,7 @@ def inventory_menu(name, role):
         print("1:Purchase new item \n2:Stock check/update \n3:Check purchase order status \n4:Modify,Cancel, Mark item as received , or Pay a purchase order \n5:Change Low stock threshold \n6:Report(Inventory Log) \n7:EXIT ")
         inventory_func = int(input("Enter the choice"))
         if inventory_func == 1:
+            display_inventory(read_inventory(name,role), name, role, lowstock_threshold)
             purchase_inventory(name, role)
         elif inventory_func == 2:
            display_inventory(read_inventory(name, role),name, role,lowstock_threshold)
@@ -810,7 +811,6 @@ def display_purchase_order(name,role,purchase_file_data):
         print("Purchase file is empty")
 def purchase_inventory(name, role):
     inventory_list= read_inventory(name, role)
-    display_inventory(inventory_list,name, role,lowstock_threshold)
     section_purchase_list =[]
     while True:
         purchase_item = input("""Enter item number to purchase, "new" for a new item, or "exit" to exit: """ )
