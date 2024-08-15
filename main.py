@@ -693,10 +693,10 @@ def purchase_inventory(name, role,lowstock_threshold):
     purchase_list =read_purchase_list(name, role)
     section_purchase_list =[]
     while True:
-        purchase_item = input("""Enter item number to purchase, "new" for a new item, or "exit" to exit: """ )
+        purchase_item = input("""Enter item number to purchase, "new" for a new item, or "exit" to exit: """ )  #done valid                                                        3
         if purchase_item.lower() == "exit":
             return None
-        if purchase_item.lower() == "new" :
+        elif purchase_item.lower() == "new" :
             while True :
                 manufacture_brand = input("Enter manufacture brand: ")
                 item_name = input("Enter item name: ")
@@ -706,9 +706,9 @@ def purchase_inventory(name, role,lowstock_threshold):
                 print(f"{item_name} added to purchase order.")
                 while True:
                     addmore_option = input("Do you want to add more ? (Y/N)")
-                    if addmore_option.lower() == 'y':
+                    if addmore_option.lower().strip() == 'y':
                         break
-                    elif addmore_option.lower() == 'n':
+                    elif addmore_option.lower().strip() == 'n':
                         return purchase_summary(name, role,section_purchase_list)
                     else:
                         print("Invalid input. Please Enter Y or N only")
@@ -717,14 +717,14 @@ def purchase_inventory(name, role,lowstock_threshold):
             index_item = int(purchase_item) - 1
             if 0 <= index_item < len(inventory_list) :
                 item = inventory_list[index_item]
-                quantity = int(input(f"Enter quantity to purchase for {item[0]} "))
+                quantity = int(input(f"Enter quantity to purchase for {item[0]} {item[1]} "))
                 if quantity > 0 :
-                    section_purchase_list.append([item[1],quantity,item[3],name, role])
-                    print(f"{item[0]}added to purchase list.")
+                    section_purchase_list.append([item[0],item[1],quantity,item[3],name, role])
+                    print(f"{item[0]} {item[1]} added to purchase list.")
                     addmore_option = input("Do you want to add more ? (Y/N)")
-                    if addmore_option.lower()=='y' :
+                    if addmore_option.lower().strip()=='y' :
                         continue
-                    elif addmore_option.lower()== 'n':
+                    elif addmore_option.lower().strip()== 'n':
                         return purchase_summary(name, role,section_purchase_list)
                     else :
                         print("Invalid")
@@ -740,23 +740,33 @@ def purchase_summary(name, role, purchase_list):
     for i, item in enumerate(purchase_list, 1): # start counting from 1
         total_eachitem = item[2] * item[3]
         total_purchase = total_purchase + total_eachitem
-        print(f"{i},{item[0]}: Quantity:{item[2]},Cost per unit:RM{item[3]:.2f}, Total:RM{total_eachitem} ")
+        print(f"{i}, {item[0]}: Quantity:{item[2]},Cost per unit:RM{item[3]:.2f}, Total:RM{total_eachitem} ")
     print(f"The total purchase amount is RM{total_purchase}")
     while True:
         payment_status = input("Pay now?(Y/N):")
-        if payment_status.lower() =='y':
+        if payment_status.lower().strip() =='y':
             payment_status = "PAID"
             break
-        elif payment_status.lower() == 'n':
+        elif payment_status.lower().strip() =='n':
             payment_status = "UNPAID"
             break
         else:
             print("Invalid choice")
-    for item in enumerate(purchase_list):
-        total_cost = item[2] * item[3]
-        purchase_list[i] = [item[0], item[1], item[2], item[3], total_cost, payment_status, name, role]
-
-    write_purchase_list(name, role ,purchase_list)
+        # Update each item in the list with the new details
+    for i in range(len(purchase_list)): #loop thru the purchase list, start counting i from 0
+        total_cost = purchase_list[i][2] * purchase_list[i][3]
+        purchase_list[i] = [purchase_list[i][0], purchase_list[i][1], purchase_list[i][2], purchase_list[i][3],total_cost, payment_status, name, role]
+    print("Added to purchase list")
+    write_purchase_list_in_append(name, role ,purchase_list)
+def write_purchase_list_in_append(name, role ,purchase_list):
+    try:
+        with open("purchase_list.txt", "a") as file:
+            for item in purchase_list:
+                file.write(f"{item[0]},{item[1]},{item[2]},{item[3]},{item[4]},{item[5]},{item[6]},{item[7]}\n")
+            inventory_log(name, role, "Write in purchase order", "Wrote purchase order file ")
+    except FileNotFoundError:
+        inventory_log(name, role, "Write in purchase order", "Failed to write purchase order files")
+        print("Inventory file not found.")
 def modify_cancel_received_order(name,role,purchase_file_data):
     display_purchase_order(name,role,purchase_file_data)
     while True:
