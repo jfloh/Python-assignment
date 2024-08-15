@@ -683,8 +683,7 @@ def display_purchase_order(name,role,purchase_file_data):
     if len(purchase_file_data) != 0:
         print("Current purchase order:")
         for i, item in enumerate(purchase_file_data, 1):
-            print(
-                f"{i}.Brand: {item[0]}, Item name:{item[1]}, Quantity:{item[2]}, Price per unit:RM{item[3]:.2f}, Total:{item[4]}, Status:{item[5]}, Ordered by:{item[6]}, Role:{item[7]}")
+            print(f"{i}.Brand: {item[0]}, Item name:{item[1]}, Quantity:{item[2]}, Price per unit:RM{item[3]:.2f}, Total:{item[4]}, Status:{item[5]}, Ordered by:{item[6]}, Role:{item[7]}")
     else:
         print("Purchase file is empty")
 def purchase_inventory(name, role,lowstock_threshold):
@@ -754,6 +753,7 @@ def purchase_summary(name, role, purchase_list):
             print("Invalid choice")
         # Update each item in the list with the new details
     for i in range(len(purchase_list)): #loop thru the purchase list, start counting i from 0
+        inventory_log(name, role, "Purchase", f"Purchased item{purchase_list[i][0]} {purchase_list[i][0]}")
         total_cost = purchase_list[i][2] * purchase_list[i][3]
         purchase_list[i] = [purchase_list[i][0], purchase_list[i][1], purchase_list[i][2], purchase_list[i][3],total_cost, payment_status, name, role]
     print("Added to purchase list")
