@@ -655,7 +655,7 @@ def save_threshold(threshold):
     with open("low_stock_threshold.txt", "w") as file:
         file.write(str(threshold))
 def log_menu(name,role):
-    log_data = read_inventory_log()
+    log_data = read_inventory_log(name,role)
 
     print("Log Menu: ")
     print("1. Display Inventory Log")
@@ -677,7 +677,7 @@ def log_menu(name,role):
         else:
             print("Invalid choice. Please try again.")
 #Record inventory activity in log file.
-def read_inventory_log():
+def read_inventory_log(name,role):
     try:
         with open('inventory_log.txt', 'r') as inventory_log_file:
             log_lines = inventory_log_file.read()#read all line
@@ -695,8 +695,8 @@ def read_inventory_log():
                 if len(components) != 5: # Check if the line has exactly 5 components
                     print(f"Warning: Invalid data in line {i}. Skipping.")
                     continue
-                name,role,activity,detail,time = components
-                log_data.append([name,role,activity,detail,time])
+                log_name,log_role,activity,detail,time = components
+                log_data.append([log_name,log_role,activity,detail,time])
             except ValueError:
                 print(f"Warning: Invalid value in line {i}. Skipping.")
     inventory_log(name,role,"Read Log","Read inventory log file")
