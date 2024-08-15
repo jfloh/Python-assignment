@@ -795,7 +795,7 @@ def modify_cancel_received_order(name,role,purchase_file_data):
                 print("Order has been canceled.")
                 write_purchase_list(name, role, purchase_file_data)
                 break
-        elif modify_input.lower().strip() =='r': #mark item as received
+        elif modify_input.lower().strip() =='r': #Mark item as received
             if purchase_file_data[modify_choice][5] == "PAID":
                 mark_item_received(name, role, purchase_file_data[modify_choice])
                 purchase_file_data.pop(modify_choice)  # Remove the received item from purchase list
