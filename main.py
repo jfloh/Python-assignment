@@ -146,7 +146,7 @@ def login_sys(username, password):
                 if user[5] in ['superuser', 'admin', 'inventory']:  # Call user_menu for superuser, admin, and inventory
                     user_menu(user)  # Call user_menu with user details
                 elif user[5] == 'customer':
-                    customer_menu()
+                    customer_menu(user[0],user[5],read_threshold())
             else:
                 print(f"User {username} is not approved yet. Please contact admin to approve...") #
             return
@@ -310,44 +310,46 @@ def inquiry_sys_usage():
 #HENG WEI JIE #TP075936
 #Customer Management
 
+CUSTOMER_PURCHASE_LIST = 'customer_purchase.txt'
 
 def read_orders():
     orders = []
     try:
-        with open(ORDER_STATUS_FILE, 'r') as file:
+        with open(CUSTOMER_PURCHASE_LIST, 'r') as file:
             for line in file:
                 order = line.strip().split(',')
                 if len(order) == 6:
                     try:
                         order_type = order[0]
-                        item = order[1]
-                        quantity = int(order[2])
-                        total_price = float(order[3])
-                        paid = order[4] == 'True'
-                        status = order[5]
+                        brand = order[1]
+                        item_name = order[2]
+                        quantity = int(order[3])
+                        price = float(order[4])
+                        paid = order[5] == 'True'
+                        status = order[6]
 
-                        order = (order_type, item, quantity, total_price, paid, status)
+                        order = (order_type, brand, item_name, quantity, price, paid, status)
                         orders.append(order)
                     except ValueError as e:
                         print(f"Error processing line: {line}. Error: {e}")
                 else:
                     print(f"Invalid line format: {line}")
     except FileNotFoundError:
-        print(f"File '{ORDER_STATUS_FILE}' not found.")
+        print(f"File '{CUSTOMER_PURCHASE_LIST}' not found.")
     except IOError as e:
         print(f"Error reading file: {e}")
     return orders
 
 
-def write_order_status(orders):
-    with open(ORDER_STATUS_FILE, 'w') as file:
+def write_customer_list(orders):
+    with open(CUSTOMER_PURCHASE_LIST, 'w') as file:
         for order in orders:
-            order_type, item, quantity, total_price, paid, status = order
+            order_type, brand, item_name, quantity, price, paid, status = order
             paid_str = 'True' if paid else 'False'
-            file.write(f"{order_type},{item},{quantity},{total_price},{paid_str},{status}\n")
+            file.write(f"{order_type},{brand},{item_name},{price},{quantity},{paid_str},{status}\n")
 
 
-def customer_menu():
+def customer_menu(name, role, lowstock_threshold):
     while True:
         print("\nCustomer Menu")
         print("1. Purchase Order")
@@ -362,7 +364,7 @@ def customer_menu():
         choice = input("Enter your choice: ")
 
         if choice == '1':
-            place_order()
+            place_order(name, role, lowstock_threshold)
         elif choice == '2':
             place_service_order()
         elif choice == '3':
@@ -382,23 +384,50 @@ def customer_menu():
             print("Invalid choice. Please try again.")
 
 
-def place_order(orders, inventory):
-    display_inventory(inventory)
-    item = input("Enter item name to order: ").strip().lower()
-    if item in inventory:
-        quantity = int(input("Enter quantity: "))
-        if quantity <= inventory[item]['stock']:
-            total_price = inventory[item]['price'] * quantity
-            order = ('Preorder', item, quantity, total_price, False, 'Pending')
-            orders.append(order)
-            write_order_status()
-            print("Order placed successfully!")
+def place_order(name, role, lowstock_threshold):
+    # Display the current inventory to the customer
+    inventory_list = read_inventory(name, role)
+    display_inventory(inventory_list, name, role, lowstock_threshold)
+
+    # Allow the customer to input their order
+    while True:
+        item_index = input("Enter item number to order (or 'exit' to cancel): ")
+        if item_index.lower() == 'exit':
+            return None
+        elif item_index.isnumeric():
+            item_index = int(item_index) - 1
+            if 0 <= item_index < len(inventory_list):
+                item = inventory_list[item_index]
+                break
+            else:
+                print("Invalid item number.")
         else:
-            print("Insufficient stock.")
-    else:
-        print("Item not found in inventory.")
+            print("Invalid input.")
 
+    # Ask for the quantity of the item they wish to order
+    while True:
+        quantity = input("Enter quantity: ")
+        if quantity.isnumeric() and int(quantity) > 0:
+            quantity = int(quantity)
+            if quantity <= item[2]:
+                break
+            else:
+                print("Insufficient stock available for this item.")
+        else:
+            print("Invalid quantity.")
 
+    # Calculate the total price
+    total_price = item[3] * quantity
+
+    # Create an order list: [order_type, brand, item_name, quantity, price, paid, status]
+    order = ['Preorder', item[1], item[0], quantity, item[3], False, 'Pending']
+
+    # Add the order to the list of orders
+    orders = read_orders()  # Read current orders
+    orders.append(order)    # Add new order
+    write_customer_list(orders)  # Write all orders back to the file
+
+    print(f"Order placed successfully! You ordered {quantity}x {item[1]} for a total of RM{total_price:.2f}.")
 
 
 
