@@ -64,7 +64,7 @@ def sign_up_process():
             print("Provide a valid city of domicile.")
     while True:
         role = input("Enter role (customer/admin/inventory/superuser): ").lower().strip()
-        valid_roles = ['customer', 'admin', 'superuser','inventory']
+        valid_roles = ['customer', 'admin', 'superuser', 'inventory']
         if role.isdigit():
             print("Role cannot be a number. Please enter a valid role.")
         elif role in valid_roles:
@@ -90,14 +90,14 @@ def time():
     date_string = now.strftime('%Y-%m-%d %H:%M:%S')
     return date_string
 
-#User Management
-#CHAI TIAN CHENG
-#TP075051
+# User Management
+# CHAI TIAN CHENG
+# TP075051
 def user_menu(user):
     while True:
-        print(f"User Menu - {user[0]} ({user[2]})")
+        print(f"User Menu - {user[0]} ({user[2]})") #show user's name and role
         print("1. Check Customer Order Status")
-        if user[5] in ['superuser', 'admin']:
+        if user[5] in ['superuser', 'admin']:  #only for superuser or admin
             print("2. Verify New Customers")
             print("3. Reports")
         if user[5] == 'superuser':
@@ -106,11 +106,11 @@ def user_menu(user):
             print("6. Disable User Access")
             print("7. Inquiry of User’s system usage")
             print("8. Approve User")
-        if user[5] in ['inventory','superuser']:
+        if user[5] in ['inventory', 'superuser']: #only for superuser or inventory
             print("9. Inventory Staff Menu")
         print("10. Exit")
 
-        choice = input("Enter your choice: ")
+        choice = input("Enter your choice: ") #ask user enter choice
 
         if choice == '10':
             print("Exiting the system.")
@@ -131,8 +131,8 @@ def user_menu(user):
             inquiry_sys_usage()
         elif choice == '8' and user[5] == 'superuser':
             approve_user_process()
-        elif choice == '9' and user[5] in ['inventory','superuser']:
-            inventory_menu(user[0],user[5])
+        elif choice == '9' and user[5] in ['inventory', 'superuser']:
+            inventory_menu(user[0], user[5])
         else:
             print("Invalid choice. Please try again!")
 
@@ -141,37 +141,39 @@ def login_sys(username, password):
 
     for user in users:
         if user[0] == username and user[1] == password:
-            if user[6] == 'True':
+            if user[6] == 'True': #check where user is approved
                 print(f"Login successful. Welcome {user[0]} ({user[5]})")
                 if user[5] in ['superuser', 'admin', 'inventory']:  # Call user_menu for superuser, admin, and inventory
                     user_menu(user)  # Call user_menu with user details
                 elif user[5] == 'customer':
-                    customer_menu(user[0],user[5],read_threshold())
+                    customer_menu(user[0], user[5], read_threshold())
             else:
-                print(f"User {username} is not approved yet. Please contact admin to approve...") #
+                print(f"User {username} is not approved yet. Please contact admin to approve...")
             return
     print("Invalid username or password.")
 
 # approval process
 def approve_user(super_user, username):
+    # super_user as parameter represent user attempting approve user
     users = read_users()
     if super_user not in ['superuser', 'admin']:
         print("Only superuser and admin can approve.")
         return
 
-    for user in users:
-        if user[0] == username:
-            user[6] = 'True'
-            write_users(users)
+    for user in users: #loop through each user in users list
+        if user[0] == username: #check current user matches the username
+            user[6] = 'True' #if yes, set approval status
+            write_users(users) #write the changes back to users list
             print(f"User {username} approved successfully.")
             return
     print(f"User {username} not found.")
 # Function to read users from file
-def  read_users():
-    users = []
-    try:
-        with open(User_details, 'r') as file:
-            for line in file:
+def read_users():
+    users = [] #initializes an empty list as it read from the file
+    try: #to handle error that may occur during file operations
+        #with is to ensure file is properly closed after read
+        with open(User_details, 'r') as file: #open User_details file
+            for line in file: #
                 user = line.strip().split(',')
                 if len(user) == 8:  # Ensure there are exactly 8 fields
                     users.append(user)
@@ -190,7 +192,7 @@ def write_users(users):
 
 
 # Function to sign up a new user
-def sign_up(username, password, phone_num, ic_passport, city,role):
+def sign_up(username, password, phone_num, ic_passport, city, role):
     users = read_users()
     for user in users:
         if user[0] == username:
@@ -201,7 +203,7 @@ def sign_up(username, password, phone_num, ic_passport, city,role):
     if role == 'superuser':
         approved = 'True'  # Superuser will be approved immediately
 
-    users.append([username, password, phone_num, ic_passport, city,role, approved,time()])
+    users.append([username, password, phone_num, ic_passport, city, role, approved, time()])
     write_users(users)
     print(f"User {username} signed up successfully. Awaiting approval.")
 
@@ -318,7 +320,7 @@ def read_orders():
         with open(CUSTOMER_PURCHASE_LIST, 'r') as file:
             for line in file:
                 order = line.strip().split(',')
-                if len(order) == 6:
+                if len(order) == 7:
                     try:
                         order_type = order[0]
                         brand = order[1]
@@ -605,7 +607,7 @@ def inventory_menu(name, role):
     inventory_log(name,role,"Log in","User logged in")
     while True:
         print("\nInventory Menu")
-        print("1:Purchase \n2:Stock check/update \n3:Check purchase order status \n4:Modify,Cancel or Mark as received purchase order \n5:Change Low stock threshold \n6:Report(Inventory Log) \n7:EXIT ")
+        print("1:Purchase new item \n2:Stock check/update \n3:Check purchase order status \n4:Modify,Cancel, Mark item as received , or Pay a purchase order \n5:Change Low stock threshold \n6:Report(Inventory Log) \n7:EXIT ")
         inventory_func = int(input("Enter the choice"))
         if inventory_func == 1:
             purchase_inventory(name, role,lowstock_threshold)
@@ -616,7 +618,7 @@ def inventory_menu(name, role):
             display_purchase_order(name,role,read_purchase_list(name,role))
         elif inventory_func == 4 :
             if role == 'inventory':
-                modify_cancel_received_order(name,role,read_purchase_list(name,role))
+                modify_purchase_order(name,role,read_purchase_list(name,role))
             else:
                 print("Only Inventory staff can modify the purchase order")
         elif inventory_func == 5 :
@@ -627,7 +629,7 @@ def inventory_menu(name, role):
            print("Exiting...")
            return
         else:
-           print("Invalid")
+           print("Invalid input")
 #Reading inventory in list of list
 def read_inventory(name, role):
     # Check the inventory file
@@ -725,7 +727,7 @@ def purchase_inventory(name, role,lowstock_threshold):
                     else:
                         print("Invalid input. Please Enter Y or N only")
 
-        elif purchase_item.isnumeric(): #validate
+        elif purchase_item.isnumeric():
             index_item = int(purchase_item) - 1
             if 0 <= index_item < len(inventory_list) :
                 item = inventory_list[index_item]
@@ -781,7 +783,7 @@ def write_purchase_list_in_append(name, role ,purchase_list):
     except FileNotFoundError:
         inventory_log(name, role, "Write in purchase order", "Failed to write purchase order files")
         print("Inventory file not found.")
-def modify_cancel_received_order(name,role,purchase_file_data):
+def modify_purchase_order(name,role,purchase_file_data):
     display_purchase_order(name,role,purchase_file_data)
     while True:
         modify_choice = int(input("Enter the item index you want to modify ,cancel or mark as received: "))- 1
@@ -791,7 +793,7 @@ def modify_cancel_received_order(name,role,purchase_file_data):
             print("Invalid item index.")
 
     while True:
-        modify_input = input("Enter 'm' to modify a order, 'c' to cancel a order, 'r' as received (type 'exit' to quit):  ")
+        modify_input = input("Enter 'm' to modify a order, 'p'to pay a order,'c' to cancel a order, 'r' as received (type 'exit' to quit):  ")
         if modify_input.lower().strip() == 'm':
             if purchase_file_data[modify_choice][5] == "PAID":
                 print("Cannot modify or cancel a paid order.")
@@ -834,6 +836,17 @@ def modify_cancel_received_order(name,role,purchase_file_data):
             else:
                 print("Only paid orders can be marked as received.")
                 return
+        elif modify_input.lower().strip() =='p': #Paid an item
+            if purchase_file_data[modify_choice][5] == "UNPAID":
+                purchase_file_data[modify_choice][5] = "PAID" #Change Unpaid to Paid
+                print(f"Paid item : {purchase_file_data[modify_choice][0]} {purchase_file_data[modify_choice][1]}")
+                inventory_log(name,role,"Paid item",f"Paid item {purchase_file_data[modify_choice][0]} {purchase_file_data[modify_choice][1]} ")
+                write_purchase_list(name, role, purchase_file_data)
+                return
+            else:
+                print("This item is already paid")
+                return
+
         elif modify_input.lower().strip()=='exit':
             return None
         else:
