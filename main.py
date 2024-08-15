@@ -795,7 +795,7 @@ def modify_cancel_received_order(name,role,purchase_file_data):
                 print("Cannot modify or cancel a paid order.")
                 return
             else:
-                inventory_log(name, role, "Canceled order", f"Canceled {purchase_file_data[modify_choice][0]}{purchase_file_data[modify_choice][1]} ")
+                inventory_log(name, role, "Canceled order", f"Canceled {purchase_file_data[modify_choice][0]} {purchase_file_data[modify_choice][1]} ")
                 purchase_file_data.pop(modify_choice) # Delete whole line in the data list
                 print("Order has been canceled.")
                 write_purchase_list(name, role, purchase_file_data)
@@ -803,6 +803,7 @@ def modify_cancel_received_order(name,role,purchase_file_data):
         elif modify_input.lower().strip() =='r': # Mark item as received
             if purchase_file_data[modify_choice][5] == "PAID":
                 mark_item_received(name, role, purchase_file_data[modify_choice])
+                inventory_log(name, role, "Received item", f"Item {purchase_file_data[modify_choice][0]} {purchase_file_data[modify_choice][1]} received")
                 purchase_file_data.pop(modify_choice)  # Remove the received item from purchase list
                 print("Order has been marked as received and updated in the inventory.")
                 write_purchase_list(name, role, purchase_file_data)
