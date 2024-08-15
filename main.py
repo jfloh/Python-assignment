@@ -605,7 +605,7 @@ def inventory_menu(name, role):
     inventory_log(name,role,"Log in","User logged in")
     while True:
         print("\nInventory Menu")
-        print("1:Purchase \n2:Stock check/update \n3:Check purchase order status \n4:Modify purchase order  \n5:Report(System Log) \n6:Change Low stock threshold \n7:EXIT ")
+        print("1:Purchase \n2:Stock check/update \n3:Check purchase order status \n4:Modify,Cancel or Mark as received purchase order \n5:Change Low stock threshold \n6:Report(Inventory Log) \n7:EXIT ")
         inventory_func = int(input("Enter the choice"))
         if inventory_func == 1:
             purchase_inventory(name, role,lowstock_threshold)
@@ -620,12 +620,12 @@ def inventory_menu(name, role):
             else:
                 print("Only Inventory staff can modify the purchase order")
         elif inventory_func == 5 :
-            log_menu(name,role)
-        elif inventory_func == 6:
             save_threshold(change_threshold(name,role,lowstock_threshold))
+        elif inventory_func == 6:
+            log_menu(name, role)
         elif inventory_func == 7:
            print("Exiting...")
-           break
+           return
         else:
            print("Invalid")
 #Reading inventory in list of list
@@ -689,18 +689,31 @@ def display_purchase_order(name,role,purchase_file_data):
 def purchase_inventory(name, role,lowstock_threshold):
     inventory_list= read_inventory(name, role)
     display_inventory(inventory_list,name, role,lowstock_threshold)
-    purchase_list =read_purchase_list(name, role)
     section_purchase_list =[]
     while True:
-        purchase_item = input("""Enter item number to purchase, "new" for a new item, or "exit" to exit: """ )  #done valid                                                        3
-        if purchase_item.lower() == "exit":
+        purchase_item = input("""Enter item number to purchase, "new" for a new item, or "exit" to exit: """ )
+        if purchase_item.lower().strip() == "exit":
             return None
-        elif purchase_item.lower() == "new" :
+        elif purchase_item.lower().strip() == "new" :
             while True :
                 manufacture_brand = input("Enter manufacture brand: ")
                 item_name = input("Enter item name: ")
-                quantity = int(input("Enter quantity: ")) #validation
-                price = float(input("Enter price per item : "))
+                while True:
+                    quantity = input("Enter quantity: ")
+                    if quantity.isnumeric()and int(quantity) > 0:
+                        quantity = int(quantity) #set quantity to integer
+                        break
+                    else:
+                        print("Invalid quantity")
+                while True:
+                    try:
+                        price = float(input("Enter price per item : "))
+                        if price > 0 :
+                            break
+                        else:
+                            print("Price cannot be 0")
+                    except ValueError:
+                        print("Invalid price format")
                 section_purchase_list.append([manufacture_brand,item_name, quantity, price,name,role])
                 print(f"{item_name} added to purchase order.")
                 while True:
@@ -716,30 +729,31 @@ def purchase_inventory(name, role,lowstock_threshold):
             index_item = int(purchase_item) - 1
             if 0 <= index_item < len(inventory_list) :
                 item = inventory_list[index_item]
-                quantity = int(input(f"Enter quantity to purchase for {item[0]} {item[1]} "))
-                if quantity > 0 :
-                    section_purchase_list.append([item[0],item[1],quantity,item[3],name, role])
-                    print(f"{item[0]} {item[1]} added to purchase list.")
+                while True:
+                    quantity = input(f"Enter quantity to purchase for {item[0]} {item[1]} ")
+                    if quantity.isnumeric() and int(quantity)> 0  :
+                        quantity = int(quantity)
+                        break
+                    else:
+                        print("Invalid quantity")
+                section_purchase_list.append([item[0],item[1],quantity,item[3],name, role])
+                print(f"{item[0]} {item[1]} added to purchase list.")
+                while True:
                     addmore_option = input("Do you want to add more ? (Y/N)")
                     if addmore_option.lower().strip()=='y' :
-                        continue
+                        break
                     elif addmore_option.lower().strip()== 'n':
                         return purchase_summary(name, role,section_purchase_list)
                     else :
                         print("Invalid")
-
-                else :
-                    print("Invalid quantity.")
-            else :
-                print("Invalid item number")
-        else :
-            print("Invalid input")
+    else :
+        print("Invalid input")
 def purchase_summary(name, role, purchase_list):
     total_purchase = 0
     for i, item in enumerate(purchase_list, 1): # start counting from 1
         total_eachitem = item[2] * item[3]
         total_purchase = total_purchase + total_eachitem
-        print(f"{i}, {item[0]}: Quantity:{item[2]},Cost per unit:RM{item[3]:.2f}, Total:RM{total_eachitem} ")
+        print(f"{i}, {item[0]} {item[1]}: Quantity:{item[2]},Cost per unit:RM{item[3]:.2f}, Total:RM{total_eachitem} ")
     print(f"The total purchase amount is RM{total_purchase}")
     while True:
         payment_status = input("Pay now?(Y/N):")
