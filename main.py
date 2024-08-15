@@ -605,7 +605,7 @@ def inventory_menu(name, role):
     inventory_log(name,role,"Log in","User logged in")
     while True:
         print("\nInventory Menu")
-        print("1:Purchase \n2:Stock check/update \n3:Check purchase order status \n4:Modify,Cancel or Mark as received purchase order \n5:Change Low stock threshold \n6:Report(Inventory Log) \n7:EXIT ")
+        print("1:Purchase new item \n2:Stock check/update \n3:Check purchase order status \n4:Modify,Cancel, Mark item as received , or Pay a purchase order \n5:Change Low stock threshold \n6:Report(Inventory Log) \n7:EXIT ")
         inventory_func = int(input("Enter the choice"))
         if inventory_func == 1:
             purchase_inventory(name, role,lowstock_threshold)
@@ -616,7 +616,7 @@ def inventory_menu(name, role):
             display_purchase_order(name,role,read_purchase_list(name,role))
         elif inventory_func == 4 :
             if role == 'inventory':
-                modify_cancel_received_order(name,role,read_purchase_list(name,role))
+                modify_purchase_order(name,role,read_purchase_list(name,role))
             else:
                 print("Only Inventory staff can modify the purchase order")
         elif inventory_func == 5 :
@@ -627,7 +627,7 @@ def inventory_menu(name, role):
            print("Exiting...")
            return
         else:
-           print("Invalid")
+           print("Invalid input")
 #Reading inventory in list of list
 def read_inventory(name, role):
     # Check the inventory file
@@ -725,7 +725,7 @@ def purchase_inventory(name, role,lowstock_threshold):
                     else:
                         print("Invalid input. Please Enter Y or N only")
 
-        elif purchase_item.isnumeric(): #validate
+        elif purchase_item.isnumeric():
             index_item = int(purchase_item) - 1
             if 0 <= index_item < len(inventory_list) :
                 item = inventory_list[index_item]
@@ -781,7 +781,7 @@ def write_purchase_list_in_append(name, role ,purchase_list):
     except FileNotFoundError:
         inventory_log(name, role, "Write in purchase order", "Failed to write purchase order files")
         print("Inventory file not found.")
-def modify_cancel_received_order(name,role,purchase_file_data):
+def modify_purchase_order(name,role,purchase_file_data):
     display_purchase_order(name,role,purchase_file_data)
     while True:
         modify_choice = int(input("Enter the item index you want to modify ,cancel or mark as received: "))- 1
@@ -791,7 +791,7 @@ def modify_cancel_received_order(name,role,purchase_file_data):
             print("Invalid item index.")
 
     while True:
-        modify_input = input("Enter 'm' to modify a order, 'c' to cancel a order, 'r' as received (type 'exit' to quit):  ")
+        modify_input = input("Enter 'm' to modify a order, 'p'to pay a order,'c' to cancel a order, 'r' as received (type 'exit' to quit):  ")
         if modify_input.lower().strip() == 'm':
             if purchase_file_data[modify_choice][5] == "PAID":
                 print("Cannot modify or cancel a paid order.")
@@ -834,6 +834,17 @@ def modify_cancel_received_order(name,role,purchase_file_data):
             else:
                 print("Only paid orders can be marked as received.")
                 return
+        elif modify_input.lower().strip() =='p':
+            if purchase_file_data[modify_choice][5] == "UNPAID":
+                purchase_file_data[modify_choice][5] = "PAID" #Change Unpaid to Paid
+                print(f"Paid item : {purchase_file_data[modify_choice][0]} {purchase_file_data[modify_choice][1]}")
+                inventory_log(name,role,"Paid item",f"Paid item {purchase_file_data[modify_choice][0]} {purchase_file_data[modify_choice][1]} ")
+                write_purchase_list(name, role, purchase_file_data)
+                return
+            else:
+                print("This item is already paid")
+                return
+
         elif modify_input.lower().strip()=='exit':
             return None
         else:
