@@ -145,6 +145,8 @@ def login_sys(username, password):
                 print(f"Login successful. Welcome {user[0]} ({user[5]})")
                 if user[5] in ['superuser', 'admin', 'inventory']:  # Call user_menu for superuser, admin, and inventory
                     user_menu(user)  # Call user_menu with user details
+                elif user[5] == 'customer':
+                    customer_menu()
             else:
                 print(f"User {username} is not approved yet. Please contact admin to approve...") #
             return
@@ -302,6 +304,104 @@ def inquiry_sys_usage():
                 print(entry.strip())
     except FileNotFoundError:
         print("No system usage data found.")
+
+
+
+#HENG WEI JIE #TP075936
+#Customer Management
+
+
+def read_orders():
+    orders = []
+    try:
+        with open(ORDER_STATUS_FILE, 'r') as file:
+            for line in file:
+                order = line.strip().split(',')
+                if len(order) == 6:
+                    try:
+                        order_type = order[0]
+                        item = order[1]
+                        quantity = int(order[2])
+                        total_price = float(order[3])
+                        paid = order[4] == 'True'
+                        status = order[5]
+
+                        order = (order_type, item, quantity, total_price, paid, status)
+                        orders.append(order)
+                    except ValueError as e:
+                        print(f"Error processing line: {line}. Error: {e}")
+                else:
+                    print(f"Invalid line format: {line}")
+    except FileNotFoundError:
+        print(f"File '{ORDER_STATUS_FILE}' not found.")
+    except IOError as e:
+        print(f"Error reading file: {e}")
+    return orders
+
+
+def write_order_status(orders):
+    with open(ORDER_STATUS_FILE, 'w') as file:
+        for order in orders:
+            order_type, item, quantity, total_price, paid, status = order
+            paid_str = 'True' if paid else 'False'
+            file.write(f"{order_type},{item},{quantity},{total_price},{paid_str},{status}\n")
+
+
+def customer_menu():
+    while True:
+        print("\nCustomer Menu")
+        print("1. Purchase Order")
+        print("2. Service/Repair Order")
+        print("3. Modify Order")
+        print("4. Make Payment")
+        print("5. Inquire Order Status")
+        print("6. Cancel Order")
+        print("7. Reports")
+        print("8. Logout")
+
+        choice = input("Enter your choice: ")
+
+        if choice == '1':
+            place_order()
+        elif choice == '2':
+            place_service_order()
+        elif choice == '3':
+            modify_order()
+        elif choice == '4':
+            make_payment()
+        elif choice == '5':
+            inquire_order_status()
+        elif choice == '6':
+            cancel_order()
+        elif choice == '7':
+            generate_reports()
+        elif choice == '8':
+            print("Logging out.")
+            break
+        else:
+            print("Invalid choice. Please try again.")
+
+
+def place_order(orders, inventory):
+    display_inventory(inventory)
+    item = input("Enter item name to order: ").strip().lower()
+    if item in inventory:
+        quantity = int(input("Enter quantity: "))
+        if quantity <= inventory[item]['stock']:
+            total_price = inventory[item]['price'] * quantity
+            order = ('Preorder', item, quantity, total_price, False, 'Pending')
+            orders.append(order)
+            write_order_status()
+            print("Order placed successfully!")
+        else:
+            print("Insufficient stock.")
+    else:
+        print("Item not found in inventory.")
+
+
+
+
+
 
 #LOH JIAN FENG #TP076480
 #Inventory Management
@@ -509,6 +609,7 @@ def modify_or_cancel_order(name,role,purchase_file_data):
             return None
         else:
             print("Invalid input")
+    write_purchase_list(purchase_file_data)
 def mark_item_received(name, role, item):
     inventory_list = read_inventory(name, role)
     item_found = False
