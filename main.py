@@ -836,7 +836,7 @@ def modify_purchase_order(name,role,purchase_file_data):
             else:
                 print("Only paid orders can be marked as received.")
                 return
-        elif modify_input.lower().strip() =='p':
+        elif modify_input.lower().strip() =='p': #Paid an item
             if purchase_file_data[modify_choice][5] == "UNPAID":
                 purchase_file_data[modify_choice][5] = "PAID" #Change Unpaid to Paid
                 print(f"Paid item : {purchase_file_data[modify_choice][0]} {purchase_file_data[modify_choice][1]}")
