@@ -761,14 +761,14 @@ def modify_cancel_received_order(name,role,purchase_file_data):
     for i, item in enumerate(purchase_file_data, 1):
         print(f"{i}. Brand: {item[0]} Name: {item[1]}: Quantity: {item[2]}, Status: {item[5]}")
     while True:
-        modify_choice = int(input("Enter the item index you want to modify ,cancel or mark as received : "))- 1
+        modify_choice = int(input("Enter the item index you want to modify ,cancel or mark as received: "))- 1
         if 0 <= modify_choice < len(purchase_file_data):
             break
         else:
             print("Invalid item index.")
 
     while True:
-        modify_input = input("Enter 'm' to modify a order, 'c' to cancel a order, 'r' as received :(or type 'exit' to quit):  ")
+        modify_input = input("Enter 'm' to modify a order, 'c' to cancel a order, 'r' as received (type 'exit' to quit):  ")
         if modify_input.lower().strip() == 'm':
             if purchase_file_data[modify_choice][5] == "PAID":
                 print("Cannot modify or cancel a paid order.")
@@ -784,6 +784,7 @@ def modify_cancel_received_order(name,role,purchase_file_data):
                         new_total = new_quantity * price_per_item
                         purchase_file_data[modify_choice][4] = new_total #assign new total to purchase_file_list[user input index(inner list)][5th element in the inner list]
                         print(f"Quantity of {item[0]} {item[1]} is changed to {new_quantity}")
+                        inventory_log(name,role,"Modify purchase order",f"Quantity of {item[0]} {item[1]} is changed to {new_quantity}")
                         write_purchase_list(name, role, purchase_file_data)
                         return
                     else:
@@ -794,6 +795,7 @@ def modify_cancel_received_order(name,role,purchase_file_data):
                 print("Cannot modify or cancel a paid order.")
                 return
             else:
+                inventory_log(name, role, "Canceled order", f"Canceled {purchase_file_data[modify_choice][0]}{purchase_file_data[modify_choice][1]} ")
                 purchase_file_data.pop(modify_choice) # Delete whole line in the data list
                 print("Order has been canceled.")
                 write_purchase_list(name, role, purchase_file_data)
@@ -836,9 +838,9 @@ def write_purchase_list(name,role,purchase_list):
         with open("purchase_list.txt", "w") as file:
             for item in purchase_list:
                 file.write(f"{item[0]},{item[1]},{item[2]},{item[3]},{item[4]},{item[5]},{item[6]},{item[7]}\n")
-            inventory_log(name, role, "Writing in purchase order", "Added item to purchase order files")
+            inventory_log(name, role, "Write in purchase order", "Wrote purchase order file ")
     except FileNotFoundError:
-        inventory_log(name, role, "Writing in purchase order", "Failed to write purchase order files")
+        inventory_log(name, role, "Write in purchase order", "Failed to write purchase order files")
         print("Inventory file not found.")
 def read_purchase_list(name, role):
     # Check the inventory file
