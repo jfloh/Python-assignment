@@ -173,10 +173,10 @@ def read_users():
     try: #to handle error that may occur during file operations
         #with is to ensure file is properly closed after read
         with open(User_details, 'r') as file: #open User_details file
-            for line in file: #
-                user = line.strip().split(',')
+            for line in file: #iterate
+                user = line.strip().split(',') #remove whitespace and split lines into list using ','
                 if len(user) == 8:  # Ensure there are exactly 8 fields
-                    users.append(user)
+                    users.append(user) #user into list
                 else:
                     # Skipping invalid user entry
                     pass
@@ -189,22 +189,23 @@ def write_users(users):
     with open(User_details, 'w') as file:
         for user in users:
             file.write(','.join(user) + '\n')
+            #join user into a single string, separated with ',', user date written in new line
 
 
 # Function to sign up a new user
 def sign_up(username, password, phone_num, ic_passport, city, role):
-    users = read_users()
+    users = read_users() #retrive list of users
     for user in users:
         if user[0] == username:
             print("Username already exists.")
             return
 
-    approved = 'False'
+    approved = 'False' #user is not approved by default
     if role == 'superuser':
         approved = 'True'  # Superuser will be approved immediately
 
     users.append([username, password, phone_num, ic_passport, city, role, approved, time()])
-    write_users(users)
+    write_users(users) #save updated list back to file
     print(f"User {username} signed up successfully. Awaiting approval.")
 
 # Check customer order status
@@ -212,9 +213,13 @@ def check_order_status():
     print("Checking customer order status...")
     try:
         with open(ORDER_STATUS_FILE, 'r') as file:
-            orders = file.readlines()
-            for order in orders:
-                print(order.strip())
+            with open(ORDER_STATUS_FILE, 'r') as file:
+                orders = file.readlines()  # reads all lines from the file, stores them in the orders list
+                if not orders: # if blank
+                    print("No order status found.")
+                else:
+                    for order in orders:
+                        print(order.strip())  # remove whitespace
     except FileNotFoundError:
         print("No order status found.")
 
@@ -227,7 +232,8 @@ def verify_new_customer(role):
 
     users = read_users()
     pending_users = [user for user in users if user[6] == 'False']
-    if not pending_users:
+    #Create a list of users whose approval status is 'False'
+    if not pending_users: #check whether there are any new customer to verify
         print("No new customers to verify.")
         return
 
@@ -242,10 +248,12 @@ def verify_new_customer(role):
 def generate_reports():
     print("Generating reports...")
     try:
-        users = read_users()
+        users = read_users() #retrieve the current list of users
         for user in users:
             print(f"Username: {user[0]}, Role: {user[5]}, Active: {user[6]}, Datetime: {user[7]}")
+            #Show username, role, active status, and datetime of last activity.
         write_log("generate_reports", "Generate user reports", "Success", "System", time())
+        #log entry includes the action "generate_reports"
     except FileNotFoundError:
         print("No user data found.")
         write_log("generate_reports", "Generate user reports", "Failure", "System", time())
