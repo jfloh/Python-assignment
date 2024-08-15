@@ -95,9 +95,9 @@ def time():
 # TP075051
 def user_menu(user):
     while True:
-        print(f"User Menu - {user[0]} ({user[2]})")
+        print(f"User Menu - {user[0]} ({user[2]})") #show user's name and role
         print("1. Check Customer Order Status")
-        if user[5] in ['superuser', 'admin']:
+        if user[5] in ['superuser', 'admin']:  #only for superuser or admin
             print("2. Verify New Customers")
             print("3. Reports")
         if user[5] == 'superuser':
@@ -106,11 +106,11 @@ def user_menu(user):
             print("6. Disable User Access")
             print("7. Inquiry of User’s system usage")
             print("8. Approve User")
-        if user[5] in ['inventory', 'superuser']:
+        if user[5] in ['inventory', 'superuser']: #only for superuser or inventory
             print("9. Inventory Staff Menu")
         print("10. Exit")
 
-        choice = input("Enter your choice: ")
+        choice = input("Enter your choice: ") #ask user enter choice
 
         if choice == '10':
             print("Exiting the system.")
@@ -141,7 +141,7 @@ def login_sys(username, password):
 
     for user in users:
         if user[0] == username and user[1] == password:
-            if user[6] == 'True':
+            if user[6] == 'True': #check where user is approved
                 print(f"Login successful. Welcome {user[0]} ({user[5]})")
                 if user[5] in ['superuser', 'admin', 'inventory']:  # Call user_menu for superuser, admin, and inventory
                     user_menu(user)  # Call user_menu with user details
@@ -154,24 +154,26 @@ def login_sys(username, password):
 
 # approval process
 def approve_user(super_user, username):
+    # super_user as parameter represent user attempting approve user
     users = read_users()
     if super_user not in ['superuser', 'admin']:
         print("Only superuser and admin can approve.")
         return
 
-    for user in users:
-        if user[0] == username:
-            user[6] = 'True'
-            write_users(users)
+    for user in users: #loop through each user in users list
+        if user[0] == username: #check current user matches the username
+            user[6] = 'True' #if yes, set approval status
+            write_users(users) #write the changes back to users list
             print(f"User {username} approved successfully.")
             return
     print(f"User {username} not found.")
 # Function to read users from file
-def  read_users():
-    users = []
-    try:
-        with open(User_details, 'r') as file:
-            for line in file:
+def read_users():
+    users = [] #initializes an empty list as it read from the file
+    try: #to handle error that may occur during file operations
+        #with is to ensure file is properly closed after read
+        with open(User_details, 'r') as file: #open User_details file
+            for line in file: #
                 user = line.strip().split(',')
                 if len(user) == 8:  # Ensure there are exactly 8 fields
                     users.append(user)
