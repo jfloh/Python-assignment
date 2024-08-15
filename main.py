@@ -618,9 +618,10 @@ def inventory_menu(name, role):
     inventory_log(name,role,"Log in","User logged in")
     while True:
         print("\nInventory Menu")
-        print("1:Purchase new item \n2:Stock check/update \n3:Check purchase order status \n4:Modify,Cancel, Mark item as received , or Pay a purchase order \n5:Change Low stock threshold \n6:Report(Inventory Log) \n7:EXIT ")
+        print("1:Purchase new item \n2:Stock check/update \n3:Check purchase order status \n4:Modify,Cancel, Mark item as received, or Pay a purchase order \n5:Change Low stock threshold \n6:Report(Inventory Log) \n7:EXIT ")
         inventory_func = int(input("Enter the choice"))
         if inventory_func == 1:
+            display_inventory(read_inventory(name, role), name, role, lowstock_threshold)
             purchase_inventory(name, role,lowstock_threshold)
         elif inventory_func == 2:
            display_inventory(read_inventory(name, role),name, role,lowstock_threshold)
@@ -665,7 +666,7 @@ def read_inventory(name, role):
                 print(f"Warning: Invalid data in line {i}. Skipping.")
                 continue
             #Putting item in a list of list
-            brand,item_name, quantity, price = columns
+            brand,item_name, quantity, price = columns # Unpacks the columns into variables.
             inventory_data.append([brand,item_name, int(quantity), float(price)])
         except ValueError:
             print(f"Warning: Invalid value in line {i}. Skipping.")
@@ -674,7 +675,7 @@ def read_inventory(name, role):
 
 #Display the inventory stock
 def display_inventory(inventory_data,name, role,lowstock_threshold):
-    inventory_log(name, role, "Display inventory", "Displayed inventory items")
+    inventory_log(name, role, "Display inventory", "Displayed all inventory items")
     if len(inventory_data) != 0 :
         total_inventory = 0
         print("Current Inventory:")
@@ -701,7 +702,6 @@ def display_purchase_order(name,role,purchase_file_data):
         print("Purchase file is empty")
 def purchase_inventory(name, role,lowstock_threshold):
     inventory_list= read_inventory(name, role)
-    display_inventory(inventory_list,name, role,lowstock_threshold)
     section_purchase_list =[]
     while True:
         purchase_item = input("""Enter item number to purchase, "new" for a new item, or "exit" to exit: """ )
@@ -759,6 +759,8 @@ def purchase_inventory(name, role,lowstock_threshold):
                         return purchase_summary(name, role,section_purchase_list)
                     else :
                         print("Invalid")
+            else:
+                print("Invalid item index")
     else :
         print("Invalid input")
 def purchase_summary(name, role, purchase_list):
