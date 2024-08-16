@@ -210,17 +210,24 @@ def sign_up(username, password, phone_num, ic_passport, city, role):
 
 # Check customer order status
 def check_order_status():
-    print("Checking customer order status...")
+    print("Checking customer order status...")  # Inform the user that the process of checking customer order status has started
+
     try:
+        # Attempt to open the ORDER_STATUS_FILE in read mode
         with open(ORDER_STATUS_FILE, 'r') as file:
-            with open(ORDER_STATUS_FILE, 'r') as file:
-                orders = file.readlines()  # reads all lines from the file, stores them in the orders list
-                if not orders: # if blank
-                    print("No order status found.")
-                else:
-                    for order in orders:
-                        print(order.strip())  # remove whitespace
+            # Read all lines from the file and store them in the orders list
+            orders = file.readlines()
+
+            # Check if the orders list is empty
+            if not orders:
+                print("No order status found.")  # Inform the user if no orders are found
+            else:
+                # Iterate through each order in the orders list
+                for order in orders:
+                    # Print each order, removing any leading/trailing whitespace
+                    print(order.strip())
     except FileNotFoundError:
+        # Handle the case where the file does not exist
         print("No order status found.")
 
 # Verify new customer
