@@ -1182,15 +1182,13 @@ def read_inventory_log(name,role):
             line = line.strip() #remove whitespace
             if len(line) == 0 : #skip empty lines
                 continue
-            try:
-                components = line.split(",")#split the log components out
-                if len(components) != 5: # Check if the line has exactly 5 components
-                    print(f"Warning: Invalid data in line {i}. Skipping.")
-                    continue
-                log_name,log_role,activity,detail,time = components #unpacks components to log_name,log_role,activity,detail,time
-                log_data.append([log_name,log_role,activity,detail,time])
-            except:
-                print(f"Warning: Invalid value in line {i}. Skipping.")
+            components = line.split(",")#split the log components out
+            if len(components) != 5: # Check if the line has exactly 5 components
+                print(f"Warning: Invalid data in line {i}. Skipping.")
+                continue
+            log_name,log_role,activity,detail,time = components #unpacks components to log_name,log_role,activity,detail,time
+            log_data.append([log_name,log_role,activity,detail,time])
+
     inventory_log(name,role,"Read Log","Read inventory log file")
     return log_data
 def inventory_log(name,role,activity,details):
