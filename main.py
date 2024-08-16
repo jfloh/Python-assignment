@@ -3,7 +3,6 @@ from datetime import datetime
 User_details = 'User_details.txt'
 ORDER_STATUS_FILE = 'Order_status.txt'
 SYSTEM_USAGE_FILE = 'System_usage.txt'
-CUSTOMER_PURCHASE_LIST = 'customer_purchase.txt'
 def main_menu():
     while True:
         print("Welcome to KLCCC System")
@@ -620,9 +619,10 @@ def modify_order(name, role, lowstock_threshold):
                     print(f"Invalid quantity. Enter a number between 1 and {item_details[2]}.")
             except ValueError:
                 print("Invalid number. Please enter a valid integer.")
+        total_price = item_details[3] * quantity
     else:
         quantity = 1
-
+        total_price = item_details[3] * 0.2
 
     # Update the order with new item details
     order = ['Preorder', item_details[0], item_details[1], quantity, item_details[3], False, 'Pending']
