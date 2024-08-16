@@ -321,7 +321,7 @@ def read_orders():
         for line in file:
             parts = line.strip().split(',')
             if len(parts) != 7:
-                print(f"Skipping invalid line (wrong number of fields): {line}")
+                print(f"error for invalid details")
                 continue
             try:
                 # Convert elements to appropriate types
@@ -336,7 +336,7 @@ def read_orders():
                 )
                 orders.append(order)
             except ValueError:
-                print(f"Skipping invalid line format")
+                print(f"error for invalid line format")
     return orders
 
 
@@ -355,7 +355,7 @@ def read_status():
         for line in file:
             parts = line.strip().split(',')
             if len(parts) != 7:
-                print(f"Skipping invalid line (wrong number of fields): {line}")
+                print(f"error for invalid details")
                 continue
             try:
                 # Convert elements to appropriate types
@@ -370,7 +370,7 @@ def read_status():
                 )
                 orders.append(order)
             except ValueError :
-                print(f"Skipping invalid line format")
+                print(f"error for invalid line format")
     return orders
 
 def write_order_status(orders):
