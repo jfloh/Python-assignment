@@ -796,7 +796,7 @@ def display_inventory(inventory_data,name, role,lowstock_threshold):
             if item[2] <= lowstock_threshold :
                 low_stock_warning = "LOW STOCK !!!"
 
-            print(f"{i}.Brand: {item[0]}, Item name: {item[1]}, Quantity: {item[2]}, Price: RM{item[3]:.2f} {low_stock_warning}")
+            print(f"{i}.Brand: {item[0]}, Item name: {item[1]}, Quantity: {item[2]}, Price per item: RM{item[3]:.2f} {low_stock_warning}")
         if role in ['superuser','inventory']:
             print(f"Total value of inventory is {total_inventory}")
     else:
