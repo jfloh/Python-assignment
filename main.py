@@ -184,16 +184,24 @@ def read_users():
         print("User details file not found.")
     return users
 
-# Function to write users to file
+# Function to write user details to a file
 def write_users(users):
-    with open(User_details, 'w') as file:
+    with open('User_details.txt', 'w') as file:  # Open the file in write mode
         for user in users:
-            file.write(','.join(user) + '\n')
+            file.write(','.join(user) + '\n')  # Write each user's details joined by commas
 
+# Function to read user details from a file
+def read_users():
+    try:
+        with open('User_details.txt', 'r') as file:  # Open the file in read mode
+            users = [line.strip().split(',') for line in file]  # Read and split each line by commas
+        return users
+    except FileNotFoundError:
+        return []  # Return an empty list if the file does not exist
 
 # Function to sign up a new user
 def sign_up(username, password, phone_num, ic_passport, city, role):
-    users = read_users()
+    users = read_users()  # Read existing users
     for user in users:
         if user[0] == username:
             print("Username already exists.")
@@ -203,57 +211,60 @@ def sign_up(username, password, phone_num, ic_passport, city, role):
     if role == 'superuser':
         approved = 'True'  # Superuser will be approved immediately
 
+    # Append new user details to the users list
     users.append([username, password, phone_num, ic_passport, city, role, approved, time()])
-    write_users(users)
+    write_users(users)  # Write updated user list to the file
     print(f"User {username} signed up successfully. Awaiting approval.")
 
-# Check customer order status
+# Function to check customer order status
 def check_order_status():
     print("Checking customer order status...")
     try:
-        with open(ORDER_STATUS_FILE, 'r') as file:
-            orders = file.readlines()
+        with open('ORDER_STATUS_FILE.txt', 'r') as file:  # Open the order status file in read mode
+            orders = file.readlines()  # Read all lines from the file
             for order in orders:
-                print(order.strip())
+                print(order.strip())  # Print each order status
     except FileNotFoundError:
-        print("No order status found.")
+        print("No order status found.")  # Print a message if the file does not exist
 
-# Verify new customer
+# Function to verify new customers
 def verify_new_customer(role):
     print("Verifying new customers...")
     if role not in ['superuser', 'admin']:
         print("Only superuser and admin can verify new customers.")
         return
 
-    users = read_users()
-    pending_users = [user for user in users if user[6] == 'False']
+    users = read_users()  # Read existing users
+    pending_users = [user for user in users if user[6] == 'False']  # Filter users pending approval
     if not pending_users:
         print("No new customers to verify.")
         return
 
     for user in pending_users:
-        print(f"Pending user: {user[0]} ({user[2]})")
+        print(f"Pending user: {user[0]} ({user[2]})")  # Print each pending user's details
 
-    username = input("Enter username to approve: ")
-    approve_user(role, username)
+    username = input("Enter username to approve: ")  # Prompt for username to approve
+    approve_user(role, username)  # Approve the user (assuming `approve_user` function is defined)
 
 
 # Generate reports
 def generate_reports():
     print("Generating reports...")
     try:
-        users = read_users()
+        users = read_users()  # Read existing users
         for user in users:
-            print(f"Username: {user[0]}, Role: {user[5]}, Active: {user[6]}, Datetime: {user[7]}")
+            print(f"Username: {user[0]}, Role: {user[5]}, Active: {user[6]}, Datetime: {user[7]}") # Print each user's details
         write_log("generate_reports", "Generate user reports", "Success", "System", time())
+        # Log the report generation success
     except FileNotFoundError:
         print("No user data found.")
         write_log("generate_reports", "Generate user reports", "Failure", "System", time())
+        # Log the report generation failure
 
 # Function to write log
 def write_log(function, activity, status, user, datetime):
-    with open("log.txt", "a") as logFile:
-        logFile.write(f"{function},{activity},{status},{user},{datetime}\n")
+    with open("log.txt", "a") as logFile: # Open the log file in append mode
+        logFile.write(f"{function},{activity},{status},{user},{datetime}\n") # Write log entry
 
 # Add user for user_menu()
 def add_user():
@@ -272,13 +283,13 @@ def add_user():
 def modify_user_details():
     print("Modifying user personal details...")
     username = input("Enter the username of the user to modify: ")
-    users = read_users()
+    users = read_users() # Read existing users
     for user in users:
         if user[0] == username:
             user[2] = input(f"Enter new phone number for {username} (current: {user[2]}): ")
             user[3] = input(f"Enter new IC/Passport number for {username} (current: {user[3]}): ")
             user[4] = input(f"Enter new city for {username} (current: {user[4]}): ")
-            write_users(users)
+            write_users(users) # Write updated user list to the file
             print(f"Details for {username} updated successfully.")
             return
     print(f"User {username} not found.")

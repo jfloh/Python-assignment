@@ -5,9 +5,7 @@ JF , inventory , Display , Displayed inventory items , 2024-08-14 10:21:24
 JF , inventory , Log in , User logged in , 2024-08-14 10:21:55 
 JF , inventory , Read inventory , Read inventory files , 2024-08-14 10:21:57 
 JF , inventory , Display , Displayed inventory items , 2024-08-14 10:21:57 
-xxx,inventory,Log in,User logged in,2024-08-14 22:55:47 
-xxx,inventory,Log in,User logged in,2024-08-14 22:56:44 
-CTC,superuser,Log in,User logged in,2024-08-14 23:28:13 
+CTC,superuser,Log in,User logged in,2024-08-14 23:28:13
 CTC,superuser,Log in,User logged in,2024-08-16 00:05:43
 CTC,superuser,Read inventory,Read inventory files,2024-08-16 00:05:52
 CTC,superuser,Display inventory,Displayed inventory items,2024-08-16 00:05:52
@@ -15,86 +13,7 @@ CTC,superuser,Purchase,Purchased itemMSI MSI,2024-08-16 00:06:30
 CTC,superuser,Write in purchase order,Wrote purchase order file ,2024-08-16 00:06:30
 CTC,superuser,Read purchase order file,Read purchase order file,2024-08-16 00:06:45
 CTC,superuser,Display purchase file,Displayed purchase file items,2024-08-16 00:06:45
-1,customer,Read inventory,Read inventory files,2024-08-16 02:34:26 
-1,customer,Display inventory,Displayed inventory items,2024-08-16 02:34:26 
-1,customer,Read inventory,Read inventory files,2024-08-16 03:44:30 
-1,customer,Display inventory,Displayed inventory items,2024-08-16 03:44:30 
-1,customer,Read inventory,Read inventory files,2024-08-16 03:44:33 
-1,customer,Deduct Inventory,Deducted 2 of RTX 3090 from inventory.,2024-08-16 03:44:33 
-1,customer,Read inventory,Read inventory files,2024-08-16 03:44:41 
-1,customer,Display inventory,Displayed inventory items,2024-08-16 03:44:41 
-1,customer,Read inventory,Read inventory files,2024-08-16 03:49:51 
-1,customer,Display inventory,Displayed inventory items,2024-08-16 03:49:51 
-1,customer,Read inventory,Read inventory files,2024-08-16 03:50:03 
-1,customer,Deduct Inventory,Deducted 5 of RTX 3090 from inventory.,2024-08-16 03:50:03 
-1,customer,Read inventory,Read inventory files,2024-08-16 03:50:16 
-1,customer,Display inventory,Displayed inventory items,2024-08-16 03:50:16 
-1,customer,Read inventory,Read inventory files,2024-08-16 04:08:15 
-1,customer,Display inventory,Displayed inventory items,2024-08-16 04:08:15 
-1,customer,Read inventory,Read inventory files,2024-08-16 04:08:20 
-1,customer,Display inventory,Displayed inventory items,2024-08-16 04:08:20 
-1,customer,Read inventory,Read inventory files,2024-08-16 04:08:44 
-1,customer,Deduct Inventory,Deducted 2 of RTX4090 from inventory.,2024-08-16 04:08:44 
-1,customer,Read inventory,Read inventory files,2024-08-16 04:09:03 
-1,customer,Display inventory,Displayed inventory items,2024-08-16 04:09:03 
-1,customer,Read inventory,Read inventory files,2024-08-16 04:11:53 
-1,customer,Display inventory,Displayed inventory items,2024-08-16 04:11:53 
-1,customer,Read inventory,Read inventory files,2024-08-16 04:12:02 
-1,customer,Deduct Inventory,Deducted 2 of RTX 3090 from inventory.,2024-08-16 04:12:02 
-1,customer,Read inventory,Read inventory files,2024-08-16 04:17:05 
-1,customer,Display inventory,Displayed inventory items,2024-08-16 04:17:05 
-1,customer,Read inventory,Read inventory files,2024-08-16 04:17:08 
-1,customer,Deduct Inventory,Deducted 2 of RTX 3090 from inventory.,2024-08-16 04:17:08 
-1,customer,Read inventory,Read inventory files,2024-08-16 04:18:21 
-1,customer,Display inventory,Displayed inventory items,2024-08-16 04:18:21 
-1,customer,Read inventory,Read inventory files,2024-08-16 04:18:25 
-1,customer,Deduct Inventory,Deducted 3 of RTX4090 from inventory.,2024-08-16 04:18:25 
-1,customer,Read inventory,Read inventory files,2024-08-16 04:20:52 
-1,customer,Display inventory,Displayed inventory items,2024-08-16 04:20:52 
-1,customer,Read inventory,Read inventory files,2024-08-16 04:20:56 
-1,customer,Deduct Inventory,Deducted 2 of RTX4090 from inventory.,2024-08-16 04:20:56 
-1,customer,Read inventory,Read inventory files,2024-08-16 11:30:04 
-1,customer,Display inventory,Displayed inventory items,2024-08-16 11:30:04 
-1,customer,Read inventory,Read inventory files,2024-08-16 11:30:10 
-1,customer,Deduct Inventory,Deducted 2 of RTX 3090 from inventory.,2024-08-16 11:30:10 
-1,customer,Read inventory,Read inventory files,2024-08-16 11:30:30 
-1,customer,Display inventory,Displayed inventory items,2024-08-16 11:30:30 
-1,customer,Read inventory,Read inventory files,2024-08-16 11:32:43 
-1,customer,Display inventory,Displayed inventory items,2024-08-16 11:32:43 
-1,customer,Read inventory,Read inventory files,2024-08-16 11:32:46 
-1,customer,Deduct Inventory,Deducted 2 of RTX4090 from inventory.,2024-08-16 11:32:46 
-1,customer,Read inventory,Read inventory files,2024-08-16 11:33:56 
-1,customer,Display inventory,Displayed inventory items,2024-08-16 11:33:56 
-1,customer,Read inventory,Read inventory files,2024-08-16 11:35:12 
-1,customer,Read inventory,Read inventory files,2024-08-16 11:37:07 
-1,customer,Display inventory,Displayed inventory items,2024-08-16 11:37:07 
-1,customer,Read inventory,Read inventory files,2024-08-16 11:37:16 
-1,customer,Deduct Inventory,Deducted 4 of Katana 5 from inventory.,2024-08-16 11:37:16 
-1,customer,Read inventory,Read inventory files,2024-08-16 11:40:07 
-1,customer,Display inventory,Displayed inventory items,2024-08-16 11:40:07 
-1,customer,Read inventory,Read inventory files,2024-08-16 11:40:22 
-1,customer,Deduct Inventory,Deducted 2 of G5 from inventory.,2024-08-16 11:40:22 
-1,customer,Read inventory,Read inventory files,2024-08-16 11:40:39 
-1,customer,Display inventory,Displayed inventory items,2024-08-16 11:40:39 
-1,customer,Read inventory,Read inventory files,2024-08-16 11:44:30 
-1,customer,Display inventory,Displayed inventory items,2024-08-16 11:44:30 
-1,customer,Read inventory,Read inventory files,2024-08-16 11:46:19 
-1,customer,Display inventory,Displayed inventory items,2024-08-16 11:46:19 
-1,customer,Read inventory,Read inventory files,2024-08-16 12:13:00 
-1,customer,Display inventory,Displayed inventory items,2024-08-16 12:13:00 
-1,customer,Read inventory,Read inventory files,2024-08-16 12:13:11 
-1,customer,Deduct Inventory,Deducted 4 of G5 from inventory.,2024-08-16 12:13:11 
-1,customer,Read inventory,Read inventory files,2024-08-16 13:12:37 
-1,customer,Display inventory,Displayed inventory items,2024-08-16 13:12:37 
-1,customer,Read inventory,Read inventory files,2024-08-16 13:12:40 
-1,customer,Deduct Inventory,Deducted 1 of RTX4090 from inventory.,2024-08-16 13:12:40 
-1,customer,Read inventory,Read inventory files,2024-08-16 13:12:45 
-1,customer,Display inventory,Displayed inventory items,2024-08-16 13:12:45 
-1,customer,Read inventory,Read inventory files,2024-08-16 14:08:09 
-1,customer,Display inventory,Displayed inventory items,2024-08-16 14:08:09 
-1,customer,Read inventory,Read inventory files,2024-08-16 14:08:14 
-1,customer,Deduct Inventory,Deducted 2 of RTX 3090 from inventory.,2024-08-16 14:08:14 
-JF,inventory,Log in,User logged in,2024-08-16 15:21:23 
+JF,inventory,Log in,User logged in,2024-08-16 15:21:23
 JF,inventory,Log in,User logged in,2024-08-16 15:23:16 
 JF,inventory,Read inventory,Read inventory files,2024-08-16 15:24:38 
 JF,inventory,Display inventory,Displayed inventory items,2024-08-16 15:24:38 
@@ -136,18 +55,41 @@ JF,inventory,Change threshold,Changed low stock threshold from 5 to 2,2024-08-16
 JF,inventory,Read Log,Read inventory log file,2024-08-16 16:04:39 
 JF,inventory,Display log,Displayed all log file,2024-08-16 16:07:31 
 JF,inventory,Read Log,Read inventory log file,2024-08-16 16:09:40 
-1,customer,Read inventory,Read inventory files,2024-08-16 16:14:09 
-1,customer,Display inventory,Displayed inventory items,2024-08-16 16:14:09 
-1,customer,Read inventory,Read inventory files,2024-08-16 16:14:26 
-1,customer,Deduct Inventory,Deducted 1 of TUF A16 from inventory.,2024-08-16 16:14:26 
-1,customer,Read inventory,Read inventory files,2024-08-16 16:18:12 
-1,customer,Read inventory,Read inventory files,2024-08-16 16:18:45 
-1,customer,Display inventory,Displayed inventory items,2024-08-16 16:18:45 
-1,customer,Read inventory,Read inventory files,2024-08-16 16:18:52 
-1,customer,Read inventory,Read inventory files,2024-08-16 16:21:38 
-1,customer,Display inventory,Displayed inventory items,2024-08-16 16:21:38 
-1,customer,Read inventory,Read inventory files,2024-08-16 16:33:47 
-1,customer,Display inventory,Displayed inventory items,2024-08-16 16:33:47 
-1,customer,Read inventory,Read inventory files,2024-08-16 16:33:55 
-1,customer,Deduct Inventory,Deducted 1 of RTX4090 from inventory.,2024-08-16 16:33:55 
-CTC,superuser,Log in,User logged in,2024-08-16 17:32:43 
+CTC,superuser,Log in,User logged in,2024-08-16 17:32:43
+CTC,superuser,Log in,User logged in,2024-08-16 22:50:22 
+CTC,superuser,Read inventory,Read inventory files,2024-08-16 22:50:32 
+CTC,superuser,Display inventory,Displayed inventory items,2024-08-16 22:50:32 
+CTC,superuser,Read inventory,Read inventory files,2024-08-16 22:50:32 
+CTC,superuser,Purchase,Purchased itemMSI MSI,2024-08-16 22:51:11 
+CTC,superuser,Write in purchase order,Wrote purchase order file ,2024-08-16 22:51:11 
+JF,inventory,Log in,User logged in,2024-08-16 22:52:40 
+CTC,superuser,Read purchase order file,Read purchase order file,2024-08-16 22:52:43 
+JF,inventory,Display purchase file,Displayed purchase file items,2024-08-16 22:52:43 
+JF,inventory,Canceled order,Canceled MSI RTX 3090 ,2024-08-16 22:52:49 
+JF,inventory,Write in purchase order,Wrote purchase order file ,2024-08-16 22:52:49 
+JF,inventory,Read inventory,Read inventory files,2024-08-16 22:52:58 
+JF,inventory,Display inventory,Displayed inventory items,2024-08-16 22:52:58 
+JF,inventory,Read inventory,Read inventory files,2024-08-16 22:52:58 
+JF,inventory,Log in,User logged in,2024-08-16 22:55:29 
+JF,inventory,Read inventory,Read inventory files,2024-08-16 22:55:33 
+JF,inventory,Display inventory,Displayed inventory items,2024-08-16 22:55:33 
+JF,inventory,Read inventory,Read inventory files,2024-08-16 22:55:33 
+JF,inventory,Log in,User logged in,2024-08-16 23:13:04 
+JF,inventory,Read inventory,Read inventory files,2024-08-16 23:13:07 
+JF,inventory,Display inventory,Displayed inventory items,2024-08-16 23:13:07 
+JF,inventory,Read inventory,Read inventory files,2024-08-16 23:13:07 
+JF,inventory,Purchase,Purchased itemAPPLE APPLE,2024-08-16 23:13:47 
+JF,inventory,Write in purchase order,Wrote purchase order file ,2024-08-16 23:13:47 
+JF,inventory,Read inventory,Read inventory files,2024-08-16 23:13:49 
+JF,inventory,Display inventory,Displayed inventory items,2024-08-16 23:13:49 
+JF,inventory,Read inventory,Read inventory files,2024-08-16 23:13:49 
+JF,inventory,Read purchase order file,Read purchase order file,2024-08-16 23:14:03 
+JF,inventory,Display purchase file,Displayed purchase file items,2024-08-16 23:14:03 
+JF,inventory,Read purchase order file,Read purchase order file,2024-08-16 23:14:07 
+JF,inventory,Display purchase file,Displayed purchase file items,2024-08-16 23:14:07 
+JF,inventory,Read inventory,Read inventory files,2024-08-16 23:14:21 
+JF,inventory,Received Inventory,Item M3 MacBook Air received with quantity 2 and added to inventory.,2024-08-16 23:14:21 
+JF,inventory,Received item,Item APPLE M3 MacBook Air received,2024-08-16 23:14:21 
+JF,inventory,Write in purchase order,Wrote purchase order file ,2024-08-16 23:14:21 
+JF,inventory,Read Log,Read inventory log file,2024-08-16 23:16:15 
+JF,inventory,Display log,Displayed all log file,2024-08-16 23:16:20 
