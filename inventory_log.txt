@@ -94,3 +94,60 @@ CTC,superuser,Display purchase file,Displayed purchase file items,2024-08-16 00:
 1,customer,Display inventory,Displayed inventory items,2024-08-16 14:08:09 
 1,customer,Read inventory,Read inventory files,2024-08-16 14:08:14 
 1,customer,Deduct Inventory,Deducted 2 of RTX 3090 from inventory.,2024-08-16 14:08:14 
+JF,inventory,Log in,User logged in,2024-08-16 15:21:23 
+JF,inventory,Log in,User logged in,2024-08-16 15:23:16 
+JF,inventory,Read inventory,Read inventory files,2024-08-16 15:24:38 
+JF,inventory,Display inventory,Displayed inventory items,2024-08-16 15:24:38 
+JF,inventory,Read inventory,Read inventory files,2024-08-16 15:24:38 
+JF,inventory,Purchase,Purchased itemASUS ASUS,2024-08-16 15:29:16 
+JF,inventory,Write in purchase order,Wrote purchase order file ,2024-08-16 15:29:16 
+JF,inventory,Read inventory,Read inventory files,2024-08-16 15:36:21 
+JF,inventory,Display inventory,Displayed inventory items,2024-08-16 15:36:21 
+JF,inventory,Read inventory,Read inventory files,2024-08-16 15:36:21 
+JF,inventory,Log in,User logged in,2024-08-16 15:37:42 
+JF,inventory,Read purchase order file,Read purchase order file,2024-08-16 15:37:49 
+JF,inventory,Display purchase file,Displayed purchase file items,2024-08-16 15:37:49 
+JF,inventory,Read purchase order file,Read purchase order file,2024-08-16 15:38:04 
+JF,inventory,Display purchase file,Displayed purchase file items,2024-08-16 15:38:04 
+JF,inventory,Read inventory,Read inventory files,2024-08-16 15:38:16 
+JF,inventory,Received Inventory,Item TUF A16 received with quantity 2 and added to inventory.,2024-08-16 15:38:16 
+JF,inventory,Received item,Item ASUS TUF A16 received,2024-08-16 15:38:16 
+JF,inventory,Write in purchase order,Wrote purchase order file ,2024-08-16 15:38:16 
+JF,inventory,Read inventory,Read inventory files,2024-08-16 15:38:29 
+JF,inventory,Display inventory,Displayed inventory items,2024-08-16 15:38:29 
+JF,inventory,Read inventory,Read inventory files,2024-08-16 15:38:29 
+JF,inventory,Purchase,Purchased itemMSI MSI,2024-08-16 15:43:01 
+JF,inventory,Write in purchase order,Wrote purchase order file ,2024-08-16 15:43:01 
+JF,inventory,Read inventory,Read inventory files,2024-08-16 15:44:02 
+JF,inventory,Display inventory,Displayed inventory items,2024-08-16 15:44:02 
+JF,inventory,Read inventory,Read inventory files,2024-08-16 15:44:02 
+JF,inventory,Purchase,Purchased itemAPPLE APPLE,2024-08-16 15:44:47 
+JF,inventory,Write in purchase order,Wrote purchase order file ,2024-08-16 15:44:47 
+JF,inventory,Log in,User logged in,2024-08-16 15:47:14 
+JF,inventory,Read inventory,Read inventory files,2024-08-16 15:47:16 
+JF,inventory,Display inventory,Displayed inventory items,2024-08-16 15:47:16 
+JF,inventory,Read inventory,Read inventory files,2024-08-16 15:47:16 
+JF,inventory,Update Inventory,Updated Brand: MSI to MSI, Item name: RTX 3090 to RTX 3090, Quantity: 3 to 2, Price :3000.0 to 3000.0 ,2024-08-16 15:55:34 
+JF,inventory,Read purchase order file,Read purchase order file,2024-08-16 15:57:33 
+JF,inventory,Display purchase file,Displayed purchase file items,2024-08-16 15:57:33 
+JF,inventory,Read purchase order file,Read purchase order file,2024-08-16 15:59:24 
+JF,inventory,Display purchase file,Displayed purchase file items,2024-08-16 15:59:24 
+JF,inventory,Change threshold,Changed low stock threshold from 5 to 2,2024-08-16 16:02:33 
+JF,inventory,Read Log,Read inventory log file,2024-08-16 16:04:39 
+JF,inventory,Display log,Displayed all log file,2024-08-16 16:07:31 
+JF,inventory,Read Log,Read inventory log file,2024-08-16 16:09:40 
+1,customer,Read inventory,Read inventory files,2024-08-16 16:14:09 
+1,customer,Display inventory,Displayed inventory items,2024-08-16 16:14:09 
+1,customer,Read inventory,Read inventory files,2024-08-16 16:14:26 
+1,customer,Deduct Inventory,Deducted 1 of TUF A16 from inventory.,2024-08-16 16:14:26 
+1,customer,Read inventory,Read inventory files,2024-08-16 16:18:12 
+1,customer,Read inventory,Read inventory files,2024-08-16 16:18:45 
+1,customer,Display inventory,Displayed inventory items,2024-08-16 16:18:45 
+1,customer,Read inventory,Read inventory files,2024-08-16 16:18:52 
+1,customer,Read inventory,Read inventory files,2024-08-16 16:21:38 
+1,customer,Display inventory,Displayed inventory items,2024-08-16 16:21:38 
+1,customer,Read inventory,Read inventory files,2024-08-16 16:33:47 
+1,customer,Display inventory,Displayed inventory items,2024-08-16 16:33:47 
+1,customer,Read inventory,Read inventory files,2024-08-16 16:33:55 
+1,customer,Deduct Inventory,Deducted 1 of RTX4090 from inventory.,2024-08-16 16:33:55 
+CTC,superuser,Log in,User logged in,2024-08-16 17:32:43 

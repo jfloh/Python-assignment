@@ -1,2 +1,4 @@
 DEll,s409 Monitor,8,700.0,5600.0,UNPAID,JF,inventory
 Lenovo,Legion 7i ,6,800.0,4800.0,PAID,JF,inventory
+MSI,RTX 3090,1,3000.0,3000.0,PAID,JF,inventory
+APPLE,MacBook Pro,1,10999.0,10999.0,UNPAID,JF,inventory

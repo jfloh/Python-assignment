@@ -138,13 +138,13 @@ def user_menu(user):
 
 def login_sys(username, password):
     users = read_users()
-
     for user in users:
         if user[0] == username and user[1] == password:
-            if user[6] == 'True': #check where user is approved
+            if user[6] == 'True':  # Check approval status
                 print(f"Login successful. Welcome {user[0]} ({user[5]})")
-                if user[5] in ['superuser', 'admin', 'inventory']:  # Call user_menu for superuser, admin, and inventory
-                    user_menu(user)  # Call user_menu with user details
+                log_system_usage(username, 'login')  # Log login activity
+                if user[5] in ['superuser', 'admin', 'inventory']:
+                    user_menu(user)
                 elif user[5] == 'customer':
                     customer_menu(user[0], user[5], read_threshold())
             else:
@@ -301,12 +301,27 @@ def inquiry_sys_usage():
     print("Inquiring user's system usage...")
     try:
         with open(SYSTEM_USAGE_FILE, 'r') as file:
-            usage = file.readlines()
-            for entry in usage:
-                print(entry.strip())
-    except FileNotFoundError:
-        print("No system usage data found.")
+            usage_entries = file.readlines()  # Read all lines from the file into a list
 
+        if not usage_entries:
+            print("No system usage data found.")  # If the list is empty, no data found
+        else:
+            for entry in usage_entries:
+                print(entry.strip())  # Print each entry, removing any leading/trailing whitespace
+
+    except FileNotFoundError:
+        print("System usage file not found. Please ensure the file exists and is accessible.")
+    except IOError as e:
+        print(f"An error occurred while reading the system usage file: {e}")
+
+
+def log_system_usage(username, activity):
+    # Get the current time in the desired format
+    current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+    # Append the log entry to the file
+    with open(SYSTEM_USAGE_FILE, 'a') as file:
+        file.write(f"{username},{activity},{current_time}\n")
 
 
 #HENG WEI JIE #TP075936
@@ -742,7 +757,7 @@ def inventory_menu(name, role):
     while True:
         print("\nInventory Menu")
         print("1:Purchase new item \n2:Stock check/update \n3:Check purchase order status \n4:Modify,Cancel, Mark item as received , or Pay a purchase order \n5:Change Low stock threshold \n6:Report(Inventory Log) \n7:EXIT ")
-        inventory_func = int(input("Enter the choice"))
+        inventory_func = int(input("Enter the choice: "))
         if inventory_func == 1:
             display_inventory(read_inventory(name,role), name, role, lowstock_threshold)
             purchase_inventory(name, role)
