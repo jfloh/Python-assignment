@@ -842,7 +842,7 @@ def purchase_inventory(name, role):
     inventory_list= read_inventory(name, role)
     section_purchase_list =[]
     while True:
-        purchase_item = input(4 )
+        purchase_item = input("""Enter item number to purchase,"new" for a new item, or "exit" to exit: """)
         if purchase_item.lower().strip() == "exit":
             return None
         elif purchase_item.lower().strip() == "new" :
