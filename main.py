@@ -313,7 +313,7 @@ def inquiry_sys_usage():
 #Customer Management
 
 CUSTOMER_PURCHASE_LIST = 'customer_purchase.txt'
-
+ORDER_STATUS_FILE = 'Order_status.txt'
 
 def read_orders():
     orders = []
@@ -596,36 +596,40 @@ def modify_order(name, role, lowstock_threshold):
     inventory_list = read_inventory(name, role)
     display_inventory(inventory_list, name, role, lowstock_threshold)
 
+    # Loop to get the valid item from inventory
     while True:
-        item = input("Enter the new item: ").lower()
-        if any(item[0].lower() == item for i in inventory_list):
-            break
-        else:
-            print("Item not found. Please enter a valid item.")
+        try:
+            item_number = int(input("Enter the new item number: ")) - 1
+            if 0 <= item_number < len(inventory_list):
+                item_details = inventory_list[item_number]
+                break
+            else:
+                print(f"Invalid item number. Enter a number between 1 and {len(inventory_list)}.")
+        except ValueError:
+            print("Invalid input. Please enter a valid item number.")
 
-    item_details = next((i for i in inventory_list if item[0].lower() == item), None)
-    if item_details:
-        if order[0] == 'Preorder':
-            while True:
-                try:
-                    quantity = int(input(f"Enter new quantity (1-{item_details[2]}): "))
-                    if 0 < quantity <= item_details[2]:
-                        break
-                    else:
-                        print(f"Invalid quantity. Enter a number between 1 and {item_details[2]}.")
-                except ValueError:
-                    print("Invalid number. Please enter a valid integer.")
-            total_price = item_details[3] * quantity
-        else:
-            quantity = 1
-            total_price = item_details[3] * 0.2
-
-        new_order = ('Preorder', item, quantity, total_price, False, 'Pending')
-        orders[order_number] = new_order
-        write_customer_list(orders)
-        print("Order modified successfully.")
+    # If it's a preorder, modify the quantity
+    if order[0] == 'Preorder':
+        while True:
+            try:
+                quantity = int(input(f"Enter new quantity (1-{item_details[2]}): "))
+                if 0 < quantity <= item_details[2]:
+                    break
+                else:
+                    print(f"Invalid quantity. Enter a number between 1 and {item_details[2]}.")
+            except ValueError:
+                print("Invalid number. Please enter a valid integer.")
+        total_price = item_details[3] * quantity
     else:
-        print(f"Item '{item}' not found in inventory.")
+        quantity = 1
+        total_price = item_details[3] * 0.2
+
+    # Update the order with new item details
+    order = ['Preorder', item_details[0], item_details[1], quantity, item_details[3], False, 'Pending']
+    orders[order_number] = order
+    write_customer_list(orders)
+    print("Order modified successfully.")
+
 
 
 
@@ -648,7 +652,7 @@ def make_payment():
         print("Invalid order number.")
         return
 
-    if order[5]:
+    if order[5]:  # Check if the order is already paid
         print("Order already paid.")
         return
 
@@ -657,9 +661,19 @@ def make_payment():
             total_price = order[4] * order[3]  # Total price = unit price * quantity
             payment = float(input(f"Enter payment (RM{total_price:.2f}): "))
             if payment == total_price:
+                # Mark the order as paid
                 orders[order_number] = (order[0], order[1], order[2], order[3], order[4], True, 'Paid')
-                write_order_status(orders)
-                print("Payment successful.")
+
+                # Write the updated paid order to the ORDER_STATUS_FILE
+                paid_orders = read_status()  # Get current paid orders
+                paid_orders.append(orders[order_number])  # Add the new paid order
+                write_order_status(paid_orders)  # Write back the updated paid orders list
+
+                # Remove the paid order from the CUSTOMER_PURCHASE_LIST
+                orders.pop(order_number)  # Remove the paid order from the pending list
+                write_customer_list(orders)  # Write back the updated pending orders
+
+                print("Payment successful. The order has been moved to the paid orders list.")
                 break
             else:
                 print(f"Payment must be RM{total_price:.2f}.")
