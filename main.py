@@ -301,12 +301,12 @@ def inquiry_sys_usage():
     print("Inquiring user's system usage...")
     try:
         with open(SYSTEM_USAGE_FILE, 'r') as file:
-            usage_entries = file.readlines()  # Read all lines from the file into a list
+            usage = file.readlines()  # Read all lines from the file into a list
 
-        if not usage_entries:
+        if not usage:
             print("No system usage data found.")  # If the list is empty, no data found
         else:
-            for entry in usage_entries:
+            for entry in usage:
                 print(entry.strip())  # Print each entry, removing any leading/trailing whitespace
 
     except FileNotFoundError:
