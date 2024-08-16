@@ -822,12 +822,12 @@ def display_purchase_order(name,role,purchase_file_data):
         for i, item in enumerate(purchase_file_data, 1):
             print(f"{i}.Brand: {item[0]}, Item name:{item[1]}, Quantity:{item[2]}, Price per unit:RM{item[3]:.2f}, Total:{item[4]}, Status:{item[5]}, Ordered by:{item[6]}, Role:{item[7]}")
     else:
-        print("Purchase file is empty")
+        print("Purchase list file is empty")
 def purchase_inventory(name, role):
     inventory_list= read_inventory(name, role)
     section_purchase_list =[]
     while True:
-        purchase_item = input("""Enter item number to purchase, "new" for a new item, or "exit" to exit: """ )
+        purchase_item = input(4 )
         if purchase_item.lower().strip() == "exit":
             return None
         elif purchase_item.lower().strip() == "new" :
@@ -916,7 +916,7 @@ def write_purchase_list_in_append(name, role ,purchase_list):
             inventory_log(name, role, "Write in purchase order", "Wrote purchase order file ")
     except FileNotFoundError:
         inventory_log(name, role, "Write in purchase order", "Failed to write purchase order files")
-        print("Inventory file not found.")
+        print("Purchase order file not found.")
 def modify_purchase_order(name,role,purchase_file_data):
     display_purchase_order(name,role,purchase_file_data)
     while True:
@@ -1012,15 +1012,15 @@ def write_purchase_list(name,role,purchase_list):
             inventory_log(name, role, "Write in purchase order", "Wrote purchase order file ")
     except FileNotFoundError:
         inventory_log(name, role, "Write in purchase order", "Failed to write purchase order files")
-        print("Inventory file not found.")
+        print("Pruchase list file not found.")
 def read_purchase_list(name, role):
     # Check the inventory file
     try:
         with open("purchase_list.txt", "r") as file:
             lines = file.readlines() #read inventory_purchase_file
     except FileNotFoundError:
-        inventory_log(name, role, "Read inventory", "Failed to read inventory files")
-        print("Inventory file not found.")
+        inventory_log(name, role, "Read purchase", "Failed to read purchase list files")
+        print("Purchase list file not found.")
         return
 
     purchase_order_data = []
@@ -1075,7 +1075,7 @@ def update_inventory(name, role): #Function for update inventory
         if new_quantity == '0':
             new_quantity = item[2]
             break
-        elif new_quantity.isnumeric() and int(new_quantity) >= 0:
+        elif new_quantity.isnumeric() and int(new_quantity) > 0:
             new_quantity = int(new_quantity)
             break
         else:
@@ -1087,7 +1087,7 @@ def update_inventory(name, role): #Function for update inventory
             break
         try:
             new_price = float(new_price)
-            if new_price >= 0:
+            if new_price > 0:
                 break
             else:
                 print("Price cannot be negative. Please try again.")
@@ -1160,7 +1160,7 @@ def read_inventory_log(name,role):
             log_lines = inventory_log_file.read()#read all line
             log_lines =log_lines.strip().split('\n') # Split content into lines
     except FileNotFoundError:
-        print("Log file not found")
+        print("Inventory Log file not found")
         return
     log_data = []
     for i, line in enumerate(log_lines,1):
