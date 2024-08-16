@@ -325,7 +325,7 @@ def log_system_usage(username, activity):
 
 
 #HENG WEI JIE #TP075936
-#Customer Management
+#Customer Management#
 
 CUSTOMER_PURCHASE_LIST = 'customer_purchase.txt'
 ORDER_STATUS_FILE = 'Order_status.txt'
