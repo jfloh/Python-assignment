@@ -8,10 +8,10 @@ JF , inventory , Display , Displayed inventory items , 2024-08-14 10:21:57
 xxx,inventory,Log in,User logged in,2024-08-14 22:55:47 
 xxx,inventory,Log in,User logged in,2024-08-14 22:56:44 
 CTC,superuser,Log in,User logged in,2024-08-14 23:28:13 
-CTC,superuser,Log in,User logged in,2024-08-16 00:05:43 
-CTC,superuser,Read inventory,Read inventory files,2024-08-16 00:05:52 
-CTC,superuser,Display inventory,Displayed inventory items,2024-08-16 00:05:52 
-CTC,superuser,Purchase,Purchased itemMSI MSI,2024-08-16 00:06:30 
-CTC,superuser,Write in purchase order,Wrote purchase order file ,2024-08-16 00:06:30 
-CTC,superuser,Read purchase order file,Read purchase order file,2024-08-16 00:06:45 
-CTC,superuser,Display purchase file,Displayed purchase file items,2024-08-16 00:06:45 
+CTC,superuser,Log in,User logged in,2024-08-16 00:05:43
+CTC,superuser,Read inventory,Read inventory files,2024-08-16 00:05:52
+CTC,superuser,Display inventory,Displayed inventory items,2024-08-16 00:05:52
+CTC,superuser,Purchase,Purchased itemMSI MSI,2024-08-16 00:06:30
+CTC,superuser,Write in purchase order,Wrote purchase order file ,2024-08-16 00:06:30
+CTC,superuser,Read purchase order file,Read purchase order file,2024-08-16 00:06:45
+CTC,superuser,Display purchase file,Displayed purchase file items,2024-08-16 00:06:45
